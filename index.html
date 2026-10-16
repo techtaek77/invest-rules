@@ -1,0 +1,649 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>투자 법칙 · 18장 강의</title>
+<meta name="description" content="인덱스 적립, 자산배분, 배당, 가치, 모멘텀, 스윙, 단타, 레버리지까지 투자·트레이딩 방법을 게임 직업처럼 비교하고, 손절·포지션 크기·기대값·바벨로 나에게 맞는 방법을 고르는 18장 강의">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<style>
+:root{
+  --bg:#f6f5f1; --paper:#ffffff; --ink:#191b1a; --sub:#606763; --line:#e2e2dc; --soft:#eeede7;
+  --idx:#1f7a5a; --alloc:#167a8a; --div:#a8801a; --val:#5b7083; --mom:#c46a1d; --swing:#6b4fa3; --day:#b8434a; --lev:#8a1f3d;
+  --idx-s:#e2f1ea; --alloc-s:#dff0f2; --div-s:#f6eed8; --val-s:#e6ebf0; --mom-s:#fbecdc; --swing-s:#ece6f6; --day-s:#f7e1e2; --lev-s:#f3dbe3;
+  --good:#1f7a5a; --bad:#b8434a;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#111312; --paper:#1a1d1b; --ink:#ecedeb; --sub:#a2a9a5; --line:#2d312e; --soft:#222623;
+    --idx:#5cc49a; --alloc:#59c0cf; --div:#e3c063; --val:#93a8bb; --mom:#f0a35c; --swing:#a98ce0; --day:#e8828a; --lev:#e77fa0;
+    --idx-s:#1d3229; --alloc-s:#183034; --div-s:#332b16; --val-s:#222a31; --mom-s:#3a2a19; --swing-s:#2a2338; --day-s:#3a2224; --lev-s:#3a1d27;
+    --good:#5cc49a; --bad:#e8828a;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#111312; --paper:#1a1d1b; --ink:#ecedeb; --sub:#a2a9a5; --line:#2d312e; --soft:#222623;
+  --idx:#5cc49a; --alloc:#59c0cf; --div:#e3c063; --val:#93a8bb; --mom:#f0a35c; --swing:#a98ce0; --day:#e8828a; --lev:#e77fa0;
+  --idx-s:#1d3229; --alloc-s:#183034; --div-s:#332b16; --val-s:#222a31; --mom-s:#3a2a19; --swing-s:#2a2338; --day-s:#3a2224; --lev-s:#3a1d27;
+  --good:#5cc49a; --bad:#e8828a;
+}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{background:var(--bg);color:var(--ink);font-family:Pretendard,-apple-system,"Apple SD Gothic Neo",sans-serif;overflow:hidden;-webkit-font-smoothing:antialiased}
+.deck{position:fixed;inset:0}
+.slide{position:absolute;inset:0;display:none;flex-direction:column;padding:clamp(20px,4.5vw,60px) clamp(16px,6vw,96px) 76px;overflow-y:auto}
+.slide.active{display:flex;animation:in .25s ease}
+@keyframes in{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.eyebrow{display:flex;flex-wrap:wrap;align-items:center;gap:8px;font-size:clamp(.8rem,1.1vw,1rem);font-weight:700;letter-spacing:.04em;color:var(--sub);margin-bottom:10px}
+.stage{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;background:var(--ink);color:var(--bg);padding:2px 8px;border-radius:6px;font-size:.85em;letter-spacing:.06em}
+.lv{padding:2px 9px;border-radius:999px;font-size:.8em;border:1px solid var(--line);background:var(--paper)}
+.lv.b{color:var(--good)}.lv.e{color:var(--bad)}
+h1{font-size:clamp(1.8rem,4.2vw,3.5rem);line-height:1.2;letter-spacing:-.03em;margin:0 0 14px}
+h2{font-size:clamp(1.4rem,3vw,2.5rem);line-height:1.25;letter-spacing:-.03em;margin:0 0 10px}
+.lead{font-size:clamp(1rem,1.6vw,1.3rem);color:var(--sub);line-height:1.6;margin:0 0 clamp(14px,2.6vh,28px);max-width:62em}
+.body{flex:1 0 auto;display:flex;flex-direction:column;justify-content:center;min-height:min-content}
+.cols{display:grid;gap:clamp(12px,1.6vw,22px);grid-template-columns:repeat(var(--n,3),1fr)}
+.box{background:var(--paper);border:1px solid var(--line);border-radius:18px;padding:clamp(14px,1.8vw,24px)}
+.box h3{margin:0 0 8px;font-size:clamp(1rem,1.5vw,1.25rem)}
+.box p,.box li{margin:0;color:var(--sub);font-size:clamp(.9rem,1.2vw,1.05rem);line-height:1.6}
+.box p+p{margin-top:8px}
+.box ul{margin:0;padding-left:1.1em}
+.game{border-left:5px solid var(--c,var(--swing));background:var(--cs,var(--soft))}
+.game h3{color:var(--c,var(--swing))}
+.game p{color:var(--ink)}
+.note{margin-top:clamp(14px,2.4vh,24px);padding:12px 16px;border-radius:12px;background:var(--soft);font-size:clamp(.85rem,1.15vw,1rem);color:var(--sub);line-height:1.6}
+.note b{color:var(--ink)}
+.foot{font-size:.78rem;color:var(--sub);margin-top:14px;line-height:1.55}
+.foot a,a{color:var(--idx)}
+.big{font-size:clamp(2rem,4.6vw,3.8rem);font-weight:800;letter-spacing:-.03em;line-height:1.05;color:var(--c,var(--ink))}
+.unit{font-size:.45em;font-weight:700;margin-left:2px}
+.cap{font-size:clamp(.82rem,1.1vw,.96rem);color:var(--sub);margin-top:6px;line-height:1.5}
+/* 직업 카드 */
+.job{display:grid;grid-template-columns:minmax(260px,.9fr) 1.1fr;gap:clamp(14px,2vw,28px);align-items:start}
+.card{background:var(--paper);border:2px solid var(--c);border-radius:20px;padding:clamp(14px,1.8vw,22px);box-shadow:0 6px 0 var(--cs)}
+.card .cls{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-bottom:10px}
+.card .cls b{font-size:clamp(1.15rem,1.9vw,1.55rem);color:var(--c)}
+.card .cls span{font-family:ui-monospace,Menlo,monospace;font-size:.8rem;color:var(--sub)}
+.stat{display:grid;grid-template-columns:96px 1fr 30px;gap:8px;align-items:center;font-size:clamp(.82rem,1.05vw,.95rem);margin:7px 0}
+.stat i{display:block;height:10px;border-radius:999px;background:var(--soft);overflow:hidden;position:relative}
+.stat i::after{content:"";position:absolute;inset:0 auto 0 0;width:calc(var(--v) * 20%);background:var(--c);border-radius:999px}
+.stat em{font-style:normal;font-weight:800;text-align:right;color:var(--c)}
+.card .fit{margin-top:12px;padding-top:10px;border-top:1px dashed var(--line);font-size:clamp(.82rem,1.05vw,.95rem);color:var(--sub);line-height:1.55}
+.card .fit b{color:var(--ink)}
+.pc{display:grid;gap:10px}
+.pc .box p b{color:var(--ink)}
+/* 지도 */
+.map{display:grid;grid-template-columns:repeat(8,1fr);gap:8px;align-items:end}
+.map .m{border-radius:14px 14px 6px 6px;background:var(--cs);border-top:5px solid var(--c);padding:10px 8px;display:flex;flex-direction:column;gap:4px;height:calc(var(--h) * 1%);min-height:84px}
+.map .m b{color:var(--c);font-size:clamp(.82rem,1.2vw,1.05rem)}
+.map .m span{font-size:clamp(.7rem,.95vw,.84rem);color:var(--sub);line-height:1.35}
+.axis{display:flex;justify-content:space-between;font-size:clamp(.78rem,1vw,.9rem);color:var(--sub);margin-top:8px;font-weight:700}
+.maparea{height:min(40vh,360px);display:flex;flex-direction:column;justify-content:flex-end}
+.maparea .map{height:100%}
+/* 표 */
+table{width:100%;border-collapse:separate;border-spacing:0;font-size:clamp(.82rem,1.15vw,1rem);background:var(--paper);border:1px solid var(--line);border-radius:16px;overflow:hidden}
+th,td{padding:clamp(7px,1.1vh,12px) clamp(8px,1vw,14px);text-align:left;border-bottom:1px solid var(--line);vertical-align:top;line-height:1.45}
+tr:last-child td{border-bottom:0}
+th{background:var(--soft);color:var(--sub);font-weight:700}
+td:first-child{font-weight:800}
+.tw{overflow-x:auto}
+.num{font-variant-numeric:tabular-nums}
+.neg{color:var(--bad);font-weight:800}.pos{color:var(--good);font-weight:800}
+/* 컨트롤 */
+.ctl{display:grid;gap:14px}
+.ctl label{display:grid;grid-template-columns:1fr auto;gap:4px 12px;align-items:center;font-weight:600;font-size:clamp(.9rem,1.2vw,1.05rem)}
+.ctl label output{font-weight:800;color:var(--swing);font-size:1.1em}
+.ctl input[type=range]{grid-column:1/-1;width:100%;accent-color:var(--swing)}
+.ctl .chk{display:flex;gap:8px;grid-template-columns:none;font-weight:600}
+.hp{height:18px;border-radius:6px;background:var(--soft);overflow:hidden;border:2px solid var(--line);margin:8px 0 4px}
+.hp div{height:100%;transition:width .25s,background .25s}
+.result{font-size:clamp(1.6rem,3.4vw,2.8rem);font-weight:800;letter-spacing:-.02em}
+/* 실전 로그 */
+.log{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;background:#151816;color:#d9e6dd;border-radius:16px;padding:clamp(14px,1.8vw,22px);font-size:clamp(.78rem,1.05vw,.95rem);line-height:1.75;white-space:pre-wrap}
+.log .r{color:#ff8a8a}.log .g{color:#8be0b3}.log .y{color:#f2d27a}.log .d{color:#8d9890}
+/* 퀴즈 */
+.quiz{display:grid;gap:12px}
+.q{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:12px 14px}
+.q p{margin:0 0 8px;font-weight:700;font-size:clamp(.9rem,1.2vw,1.05rem)}
+.opts{display:flex;flex-wrap:wrap;gap:8px}
+.opts button{font:inherit;font-size:clamp(.82rem,1.05vw,.95rem);border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:10px;padding:7px 12px;cursor:pointer}
+.opts button[aria-pressed=true]{background:var(--ink);color:var(--bg);border-color:transparent}
+.verdict{border:2px solid var(--c,var(--line));border-radius:18px;padding:clamp(14px,1.8vw,22px);background:var(--cs,var(--paper));min-height:200px}
+.verdict h3{margin:0 0 6px;color:var(--c,var(--ink));font-size:clamp(1.2rem,2vw,1.6rem)}
+.verdict p{margin:6px 0 0;line-height:1.6;color:var(--ink)}
+.verdict .cap{color:var(--sub)}
+.two{display:grid;grid-template-columns:1.1fr .9fr;gap:clamp(14px,2vw,28px);align-items:start}
+/* 바벨 */
+.sleeve{display:flex;height:64px;border-radius:14px;overflow:hidden;margin:12px 0 8px;font-weight:800;color:#fff}
+.sleeve div{display:flex;align-items:center;justify-content:center;padding:0 10px;white-space:nowrap;overflow:hidden}
+/* 법칙 */
+.rules{counter-reset:r;display:grid;grid-template-columns:1fr 1fr;gap:8px 22px;margin:0;padding:0}
+.rules li{list-style:none;counter-increment:r;position:relative;padding:8px 0 8px 46px;border-bottom:1px dashed var(--line);font-size:clamp(.9rem,1.25vw,1.08rem);line-height:1.5}
+.rules li::before{content:counter(r,decimal-leading-zero);position:absolute;left:0;top:7px;font-family:ui-monospace,Menlo,monospace;font-weight:800;color:var(--bg);background:var(--ink);border-radius:6px;padding:1px 6px;font-size:.85em}
+.rules li b{color:var(--ink)}
+.cover{justify-content:center}
+.cover .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:20px}
+.tag{display:inline-block;padding:4px 11px;border-radius:999px;font-size:.85em;font-weight:700;background:var(--cs);color:var(--c)}
+.press{font-family:ui-monospace,Menlo,monospace;font-weight:800;letter-spacing:.1em;color:var(--sub);margin-top:24px;animation:blink 1.2s steps(2) infinite}
+@keyframes blink{50%{opacity:.25}}
+@media (prefers-reduced-motion:reduce){.press{animation:none}.slide.active{animation:none}}
+/* 네비 */
+.nav{position:fixed;left:0;right:0;bottom:0;height:56px;display:flex;align-items:center;gap:12px;padding:0 clamp(12px,3vw,32px);background:linear-gradient(transparent,var(--bg) 40%)}
+.nav button{font:inherit;border:1px solid var(--line);background:var(--paper);color:var(--ink);border-radius:10px;width:42px;height:36px;cursor:pointer;font-size:1.1rem}
+.nav .talk-button{width:auto;padding:0 10px;font-size:.82rem;white-space:nowrap}
+.prog{flex:1;height:4px;background:var(--line);border-radius:4px;overflow:hidden}
+.prog div{height:100%;background:var(--swing);transition:width .2s}
+.cnt{font-variant-numeric:tabular-nums;color:var(--sub);font-size:.9rem;min-width:52px;text-align:right}
+#speakerCard{position:fixed;left:clamp(16px,6vw,96px);right:clamp(16px,6vw,96px);bottom:64px;background:var(--paper);color:var(--ink);border:2px solid var(--swing);border-radius:12px;padding:18px;z-index:10;font-size:clamp(.9rem,1.2vw,1.05rem);line-height:1.7;box-shadow:0 4px 24px #0003;max-height:45vh;overflow:auto}
+[hidden]{display:none!important}
+@media (max-width:820px){
+  .cols,.job,.two,.rules{grid-template-columns:1fr}
+  .map{grid-template-columns:1fr 1fr;align-items:stretch}
+  .map .m{height:auto;border-radius:12px;border-top:0;border-left:5px solid var(--c)}
+  .maparea{height:auto}.axis{display:none}
+  .stat{grid-template-columns:84px 1fr 26px}
+  .nav{gap:6px}
+}
+</style>
+</head>
+<body><main class="deck">
+
+<!-- 1 -->
+<section class="slide cover">
+  <div class="eyebrow"><span class="stage">NEW GAME</span> 20~30분 · 처음 시작하는 사람과 매매해 본 사람 모두</div>
+  <h1>투자 법칙<br>방법은 많지만,<br><b style="color:var(--swing)">내가 끝까지 버틸 방법</b>은 하나다</h1>
+  <p class="lead">적립·자산배분·배당·가치·모멘텀·스윙·단타·레버리지. 오늘은 이것들을 RPG 직업처럼 놓고 비교한다. 어느 직업이 가장 센지가 아니라, 내 시간과 멘탈로 끝까지 키울 수 있는 직업이 무엇인지를 고른다.</p>
+  <div class="chips">
+    <span class="tag" style="--c:var(--idx);--cs:var(--idx-s)">적립</span>
+    <span class="tag" style="--c:var(--alloc);--cs:var(--alloc-s)">자산배분</span>
+    <span class="tag" style="--c:var(--div);--cs:var(--div-s)">배당</span>
+    <span class="tag" style="--c:var(--val);--cs:var(--val-s)">가치</span>
+    <span class="tag" style="--c:var(--mom);--cs:var(--mom-s)">모멘텀</span>
+    <span class="tag" style="--c:var(--swing);--cs:var(--swing-s)">스윙</span>
+    <span class="tag" style="--c:var(--day);--cs:var(--day-s)">단타</span>
+    <span class="tag" style="--c:var(--lev);--cs:var(--lev-s)">레버리지</span>
+  </div>
+  <div class="press">▶ PRESS → TO START</div>
+  <p class="foot">← → 키, 스페이스, 스와이프로 넘긴다. <span class="lv b">입문</span> 표시는 처음 듣는 사람용, <span class="lv e">경험자</span> 표시는 매매해 본 사람용 심화다. 투자 권유가 아니며 모든 방법에 원금 손실 위험이 있다.</p>
+</section>
+
+<!-- 2 -->
+<section class="slide">
+  <div class="eyebrow"><span class="stage">WORLD MAP</span><span class="lv b">입문</span> 보유 기간으로 그린 지도</div>
+  <h2>왼쪽은 턴제 RPG, 오른쪽은 격투 게임이다</h2>
+  <p class="lead">보유 기간이 짧아질수록 판단 횟수가 늘어난다. 판단이 늘면 실수할 기회도, 수수료를 낼 기회도 같이 는다.</p>
+  <div class="body">
+    <div class="maparea"><div class="map">
+      <div class="m" style="--c:var(--idx);--cs:var(--idx-s);--h:22"><b>인덱스 적립</b><span>10년+ · 월 1회</span></div>
+      <div class="m" style="--c:var(--alloc);--cs:var(--alloc-s);--h:30"><b>자산배분</b><span>10년+ · 반기 1회</span></div>
+      <div class="m" style="--c:var(--div);--cs:var(--div-s);--h:36"><b>배당</b><span>수년 · 분기 1회</span></div>
+      <div class="m" style="--c:var(--val);--cs:var(--val-s);--h:46"><b>가치</b><span>수년 · 실적 때마다</span></div>
+      <div class="m" style="--c:var(--mom);--cs:var(--mom-s);--h:58"><b>모멘텀·추세</b><span>몇 주~몇 달</span></div>
+      <div class="m" style="--c:var(--swing);--cs:var(--swing-s);--h:72"><b>스윙</b><span>며칠~몇 주</span></div>
+      <div class="m" style="--c:var(--day);--cs:var(--day-s);--h:88"><b>단타·스캘핑</b><span>분~하루</span></div>
+      <div class="m" style="--c:var(--lev);--cs:var(--lev-s);--h:100"><b>레버리지</b><span>어디든 붙는 배율</span></div>
+    </div></div>
+    <div class="axis"><span>◀ 길게 들고 덜 판단한다</span><span>판단 횟수 · 멘탈 소모 ▶</span></div>
+    <div class="cols" style="--n:2;margin-top:16px">
+      <div class="box game" style="--c:var(--idx);--cs:var(--idx-s)"><h3>🎮 턴제 RPG (드래곤 퀘스트·파이널 판타지)</h3><p>내 턴이 오면 생각할 시간은 얼마든지 있다. 실수해도 다음 턴에 고친다. 장기 투자가 이쪽이다.</p></div>
+      <div class="box game" style="--c:var(--day);--cs:var(--day-s)"><h3>🎮 격투 게임 랭크전 (스트리트 파이터·철권)</h3><p>몇 프레임 안에 판단해야 하고, 상대는 프로와 봇이다. 판마다 입장료(수수료)를 낸다. 단타가 이쪽이다.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 3 -->
+<section class="slide">
+  <div class="eyebrow"><span class="stage">RULE 00</span><span class="lv b">입문</span> 게임의 승률표부터</div>
+  <h2>프로도 지수를 이기기 어렵고, 단타는 더 어렵다</h2>
+  <p class="lead">방법을 고르기 전에 각 게임의 공개된 승률표부터 본다. 숫자는 겁주려고 넣은 게 아니다. 어느 판에 앉는지에 따라 기본 확률이 달라진다는 걸 보려는 것이다.</p>
+  <div class="body"><div class="cols">
+    <div class="box"><div class="big" style="--c:var(--alloc)">약 90<span class="unit">%</span></div><p class="cap">미국 대형주 액티브 펀드 중 15년간 S&amp;P500보다 낮은 성과를 낸 비율(2024년 말 기준 89.5%). 2025년 한 해만 봐도 79%였다. 직업이 펀드매니저인 프로들의 성적이다.</p></div>
+    <div class="box"><div class="big" style="--c:var(--day)">97<span class="unit">%</span></div><p class="cap">브라질에서 지수선물 데이트레이딩을 300일 넘게 이어간 개인 중 손실을 본 비율. 최저임금보다 많이 번 사람은 1.1%였다.</p></div>
+    <div class="box"><div class="big" style="--c:var(--mom)">1.2<span class="unit">%p/년</span></div><p class="cap">미국 펀드 투자자가 펀드 자체 수익률보다 덜 번 연평균 격차(10년). 원인은 사고판 타이밍이었다. 자산배분형 펀드에서는 이 격차가 가장 작았다.</p></div>
+  </div>
+  <div class="note"><b>정리:</b> 장기 투자는 기업이 커지면서 파이 자체가 커지는 게임이고, 단타는 정해진 파이를 프로·알고리즘과 나눠 먹으면서 수수료까지 내는 게임이다. 그래서 단타는 기본 확률이 나쁘다. 그렇다고 단타는 절대 하지 말라는 뜻은 아니다. 하려면 확률이 나쁜 판이라는 걸 알고, 잃어도 되는 돈의 크기만큼만 한다.</div>
+  <p class="foot">출처: <a href="https://www.spglobal.com/spdji/en/spiva/article/spiva-us-year-end-2025/" target="_blank" rel="noopener">SPIVA U.S. Year-End 2025</a> · <a href="https://ritholtz.com/2025/05/the-data-on-active-large-cap-underperformance" target="_blank" rel="noopener">15년 수치(2024년 말)</a> · <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=3423101" target="_blank" rel="noopener">Chague·De-Losso·Giovannetti, Day Trading for a Living?</a> · <a href="https://www.morningstar.com/business/insights/research/mind-the-gap-2025" target="_blank" rel="noopener">Morningstar Mind the Gap 2025</a> (2026-10-16 확인). 브라질 연구는 2013~2015년에 시작한 사람이 대상이라 다른 나라·자산에 그대로 옮기기 어렵다.</p>
+</section>
+
+<!-- 4 -->
+<section class="slide" style="--c:var(--idx);--cs:var(--idx-s)">
+  <div class="eyebrow"><span class="stage">CLASS 01</span><span class="lv b">입문</span> 인덱스 적립</div>
+  <h2>인덱스 적립: 슬라임만 잡아도 레벨은 오른다</h2>
+  <p class="lead">S&amp;P500 같은 지수 ETF를 매달 같은 날 같은 금액만큼 산다. 판단할 게 거의 없다는 점이 이 방법의 무기다.</p>
+  <div class="body"><div class="job">
+    <div class="card"><div class="cls"><b>🛡️ 적립 수호자</b><span>HOLD 10Y+</span></div>
+      <div class="stat">필요 시간<i style="--v:1"></i><em>1</em></div>
+      <div class="stat">판단 횟수<i style="--v:1"></i><em>1</em></div>
+      <div class="stat">멘탈 소모<i style="--v:2"></i><em>2</em></div>
+      <div class="stat">하락 폭<i style="--v:4"></i><em>4</em></div>
+      <div class="stat">초보 적합<i style="--v:5"></i><em>5</em></div>
+      <div class="fit"><b>맞는 사람:</b> 월급이 꾸준하고, 차트를 볼 시간이 없고, 시장 평균이면 만족하는 사람.</div>
+    </div>
+    <div class="pc">
+      <div class="box"><h3>장점과 함정</h3><p><b>장점:</b> 비용이 낮고 자동화가 쉽다. 위에서 본 대로 지수를 이기는 프로도 적다.</p><p><b>함정:</b> 지루하다. 주식형 지수는 반 토막도 난다. 그리고 지루함을 못 참으면 결국 다른 직업을 찾게 된다.</p><p><b>경험자용:</b> Vanguard 분석에서는 일시금이 적립식보다 약 3번 중 2번 앞섰다. 그래도 월급쟁이는 돈이 매달 들어오니, 적립은 전략이라기보다 그냥 월급 구조다.</p></div>
+      <div class="box game"><h3>🎮 드래곤 퀘스트 레벨업 노가다</h3><p>슬라임 잡기는 지루하지만 경험치는 정직하게 쌓인다. 복리가 이 경험치다. 지루해서 보스방에 일찍 뛰어드는 사람이 대부분 전멸한다.</p></div>
+    </div>
+  </div></div>
+</section>
+
+<!-- 5 -->
+<section class="slide" style="--c:var(--alloc);--cs:var(--alloc-s)">
+  <div class="eyebrow"><span class="stage">CLASS 02</span><span class="lv b">입문</span> 자산배분 · 리밸런싱</div>
+  <h2>자산배분: 슬램덩크 북산도 강백호만으로는 못 이긴다</h2>
+  <p class="lead">주식·채권·현금처럼 다르게 움직이는 자산을 정해진 비율로 섞고, 그 비율에서 벗어나면 원래대로 되돌린다.</p>
+  <div class="body"><div class="job">
+    <div class="card"><div class="cls"><b>⚖️ 균형 감독</b><span>REBAL 6M</span></div>
+      <div class="stat">필요 시간<i style="--v:1"></i><em>1</em></div>
+      <div class="stat">판단 횟수<i style="--v:2"></i><em>2</em></div>
+      <div class="stat">멘탈 소모<i style="--v:2"></i><em>2</em></div>
+      <div class="stat">하락 폭<i style="--v:2"></i><em>2</em></div>
+      <div class="stat">초보 적합<i style="--v:5"></i><em>5</em></div>
+      <div class="fit"><b>맞는 사람:</b> 큰 하락이 무섭고, 수익이 조금 낮아도 덜 흔들리는 쪽을 고르는 사람.</div>
+    </div>
+    <div class="pc">
+      <div class="box"><h3>장점과 함정</h3><p><b>장점:</b> 낙폭이 줄어서 중간에 포기할 확률이 낮아진다. 앞에서 본 투자자 수익 격차도 자산배분형이 가장 작았다.</p><p><b>함정:</b> 상승장에서는 뒤처진다. 2022년처럼 주식과 채권이 같이 빠진 해에는 섞어도 함께 흔들렸다.</p><p><b>경험자용:</b> 리밸런싱은 오른 것을 팔고 내린 것을 사는 일이라, 심리적으로 가장 하기 싫은 매매다. 그래서 날짜를 미리 정해두고 기계적으로 한다.</p></div>
+      <div class="box game"><h3>📺 슬램덩크 · 안 감독의 교체</h3><p>강백호(공격)·채치수(골밑)·송태섭(리딩)처럼 역할이 다른 선수가 있어야 팀이 버틴다. 리밸런싱은 감독이 체력이 남은 선수와 지친 선수를 다시 맞추는 교체다.</p></div>
+    </div>
+  </div></div>
+</section>
+
+<!-- 6 -->
+<section class="slide" style="--c:var(--div);--cs:var(--div-s)">
+  <div class="eyebrow"><span class="stage">CLASS 03</span><span class="lv b">입문</span> 배당</div>
+  <h2>배당: 목장의 소는 팔지 말고 우유를 짠다</h2>
+  <p class="lead">배당을 꾸준히 주고 늘려온 기업이나 배당 ETF를 모아서, 현금흐름을 월급 보조처럼 만든다.</p>
+  <div class="body"><div class="job">
+    <div class="card"><div class="cls"><b>🐄 배당 농부</b><span>CASHFLOW</span></div>
+      <div class="stat">필요 시간<i style="--v:2"></i><em>2</em></div>
+      <div class="stat">판단 횟수<i style="--v:2"></i><em>2</em></div>
+      <div class="stat">멘탈 소모<i style="--v:2"></i><em>2</em></div>
+      <div class="stat">하락 폭<i style="--v:3"></i><em>3</em></div>
+      <div class="stat">초보 적합<i style="--v:4"></i><em>4</em></div>
+      <div class="fit"><b>맞는 사람:</b> 통장에 들어오는 돈을 봐야 버티는 사람, 은퇴 후 현금흐름을 미리 연습하려는 사람.</div>
+    </div>
+    <div class="pc">
+      <div class="box"><h3>장점과 함정</h3><p><b>장점:</b> 하락장에도 분배금이 들어오면 팔지 않고 버티기 쉽다. 심리적으로 강한 방법이다.</p><p><b>함정:</b> 배당은 공짜 수익이 아니다. 배당락만큼 가격이 내려가고, 분배율만 높은 상품은 원금이 줄어들 수 있다. 분배율이 아니라 <b>배당을 포함한 총수익</b>으로 비교한다.</p><p><b>경험자용:</b> 커버드콜은 옵션 프리미엄을 분배 재원으로 쓰는 대신 상승 참여를 일부 내준다. 금융소득 연 2,000만원을 넘으면 종합과세 대상이니 세후 금액으로 계산한다.</p></div>
+      <div class="box game"><h3>🎮 목장 게임</h3><p>소를 잘 키우면 매일 우유가 나온다. 그런데 우유를 많이 주는 것처럼 보이려고 소의 살을 깎아 우유값을 맞추는 목장이 있다. 분배율이 지나치게 높으면 소의 몸무게(원금)부터 확인한다.</p></div>
+    </div>
+  </div></div>
+</section>
+
+<!-- 7 -->
+<section class="slide" style="--c:var(--val);--cs:var(--val-s)">
+  <div class="eyebrow"><span class="stage">CLASS 04</span><span class="lv e">경험자</span> 가치 투자</div>
+  <h2>가치: 중고 매장 구석에서 레어 소프트 찾기</h2>
+  <p class="lead">기업이 실제로 버는 돈에 비해 싸게 거래되는 주식을 사서, 시장이 제값을 알아줄 때까지 기다린다. 버핏이 말하는 안전마진이다.</p>
+  <div class="body"><div class="job">
+    <div class="card"><div class="cls"><b>🔍 감정사</b><span>MARGIN OF SAFETY</span></div>
+      <div class="stat">필요 시간<i style="--v:4"></i><em>4</em></div>
+      <div class="stat">판단 횟수<i style="--v:3"></i><em>3</em></div>
+      <div class="stat">멘탈 소모<i style="--v:4"></i><em>4</em></div>
+      <div class="stat">하락 폭<i style="--v:4"></i><em>4</em></div>
+      <div class="stat">초보 적합<i style="--v:2"></i><em>2</em></div>
+      <div class="fit"><b>맞는 사람:</b> 재무제표 읽는 게 즐겁고, 남들이 외면할 때 혼자 버티는 게 오히려 편한 사람.</div>
+    </div>
+    <div class="pc">
+      <div class="box"><h3>장점과 함정</h3><p><b>장점:</b> 싸게 사면 틀렸을 때도 덜 다친다는 논리가 분명하다.</p><p><b>함정:</b> 싼 데는 이유가 있는 경우가 많다(가치 함정). 2010년대 미국에서는 가치주가 성장주보다 10년 가까이 뒤처졌다. 이론이 맞아도 기다리는 동안 버티는 게 어렵다.</p><p><b>경험자용:</b> “싸다”는 판단에 기준(PER·PBR·현금흐름)과 틀렸을 때 팔 조건을 함께 적어둔다. 그 조건 없이 사면 그냥 물타기가 된다.</p></div>
+      <div class="box game"><h3>🎮 레트로 게임 수집</h3><p>새턴 소프트를 헐값에 건지려면 감정 실력이 있어야 한다. 그리고 진짜 레어여도 몇 년 동안 아무도 안 찾을 수 있다. 감정 실력과 기다림 둘 다 필요하다.</p></div>
+    </div>
+  </div></div>
+</section>
+
+<!-- 8 -->
+<section class="slide" style="--c:var(--mom);--cs:var(--mom-s)">
+  <div class="eyebrow"><span class="stage">CLASS 05</span><span class="lv e">경험자</span> 모멘텀 · 추세추종</div>
+  <h2>모멘텀: 마리오카트 대시판에 올라타기</h2>
+  <p class="lead">최근 3~12개월에 강했던 자산이 한동안 더 강한 경향(모멘텀)을 이용한다. 추세가 꺾이면 기계적으로 내린다.</p>
+  <div class="body"><div class="job">
+    <div class="card"><div class="cls"><b>🏎️ 추세 레이서</b><span>CUT LOSS SHORT</span></div>
+      <div class="stat">필요 시간<i style="--v:3"></i><em>3</em></div>
+      <div class="stat">판단 횟수<i style="--v:3"></i><em>3</em></div>
+      <div class="stat">멘탈 소모<i style="--v:4"></i><em>4</em></div>
+      <div class="stat">하락 폭<i style="--v:3"></i><em>3</em></div>
+      <div class="stat">초보 적합<i style="--v:2"></i><em>2</em></div>
+      <div class="fit"><b>맞는 사람:</b> 자주 지는 것을 견디고, 규칙대로만 움직일 수 있는 사람.</div>
+    </div>
+    <div class="pc">
+      <div class="box"><h3>장점과 함정</h3><p><b>장점:</b> 학술 연구에서 오래 관찰된 경향이다(제가디시·티트먼, 1993). 손실은 짧게 자르고 큰 추세에서 크게 번다.</p><p><b>함정:</b> 승률이 낮은 편이라 작은 손절이 연달아 난다. 추세가 갑자기 뒤집히면(모멘텀 크래시) 한 번에 크게 맞는다. 이미 오른 것을 사야 해서 심리적으로 무섭다.</p><p><b>경험자용:</b> 진입 규칙보다 청산 규칙이 성과를 결정한다. 이동평균 이탈처럼 숫자로 정한다.</p></div>
+      <div class="box game"><h3>🎮 마리오카트 대시판</h3><p>올라타면 확 빨라진다. 그런데 코너 직전에 올라타면 그 속도 그대로 벽에 박는다. 이 방법에서 추세가 끝나는 지점이 그 코너다.</p></div>
+    </div>
+  </div></div>
+</section>
+
+<!-- 9 -->
+<section class="slide" style="--c:var(--swing);--cs:var(--swing-s)">
+  <div class="eyebrow"><span class="stage">CLASS 06</span><span class="lv e">경험자</span> 스윙 트레이딩</div>
+  <h2>스윙: 몬스터헌터처럼 패턴을 보고 빈틈만 친다</h2>
+  <p class="lead">4시간봉·일봉 기준으로 며칠~몇 주 보유한다. 진입 전에 시나리오 A/B와 손절 위치를 먼저 적는다. 형이 지금 남겨둔 트레이딩 방식이 이것이다.</p>
+  <div class="body"><div class="job">
+    <div class="card"><div class="cls"><b>🗡️ 스윙 헌터</b><span>4H · 1D</span></div>
+      <div class="stat">필요 시간<i style="--v:3"></i><em>3</em></div>
+      <div class="stat">판단 횟수<i style="--v:3"></i><em>3</em></div>
+      <div class="stat">멘탈 소모<i style="--v:4"></i><em>4</em></div>
+      <div class="stat">하락 폭<i style="--v:3"></i><em>3</em></div>
+      <div class="stat">초보 적합<i style="--v:2"></i><em>2</em></div>
+      <div class="fit"><b>맞는 사람:</b> 하루 한두 번 차트를 볼 수 있고, 진입보다 관망을 더 자주 고를 수 있는 사람.</div>
+    </div>
+    <div class="pc">
+      <div class="box"><h3>스윙의 기본 동작 4개</h3><ul><li><b>시나리오:</b> “이 가격을 지키면 A, 깨면 B”를 진입 전에 적는다.</li><li><b>손절 먼저:</b> 손절 숫자와 무효화 문장이 없으면 주문하지 않는다.</li><li><b>종가 기준:</b> 장중 바늘에 흔들리지 않게 봉 마감으로 판단한다.</li><li><b>관망도 매매:</b> 조건이 안 맞는 날은 아무것도 안 하는 게 최선이다.</li></ul></div>
+      <div class="box game"><h3>🎮 몬스터헌터</h3><p>보스가 모션을 크게 휘두르고 난 뒤의 빈틈에만 칼을 넣는다. 아무 때나 휘두르면 수레(청산)에 실려 간다. 구르기(손절) 버튼에서 손을 떼지 않는다.</p></div>
+    </div>
+  </div></div>
+</section>
+
+<!-- 10 -->
+<section class="slide" style="--c:var(--day);--cs:var(--day-s)">
+  <div class="eyebrow"><span class="stage">CLASS 07</span><span class="lv e">경험자</span> 단타 · 스캘핑</div>
+  <h2>단타: 판마다 동전을 넣는 격투 게임 랭크전</h2>
+  <p class="lead">분~하루 안에 들어갔다 나온다. 화면 앞에 붙어 있어야 하고, 매매 횟수만큼 수수료와 슬리피지가 쌓인다.</p>
+  <div class="body"><div class="job">
+    <div class="card"><div class="cls"><b>⚡ 프레임 파이터</b><span>1M · 5M</span></div>
+      <div class="stat">필요 시간<i style="--v:5"></i><em>5</em></div>
+      <div class="stat">판단 횟수<i style="--v:5"></i><em>5</em></div>
+      <div class="stat">멘탈 소모<i style="--v:5"></i><em>5</em></div>
+      <div class="stat">하락 폭<i style="--v:4"></i><em>4</em></div>
+      <div class="stat">초보 적합<i style="--v:1"></i><em>1</em></div>
+      <div class="fit"><b>맞는 사람:</b> 거의 없다. 하려면 장중 내내 시간이 있고, 잃어도 되는 금액이 정해져 있고, 기록으로 기대값이 양수라는 걸 확인한 사람이다.</div>
+    </div>
+    <div class="pc">
+      <div class="box"><h3>왜 어렵나</h3><p><b>상대:</b> 같은 화면을 보는 기관·고빈도 알고리즘과 겨룬다.</p><p><b>비용:</b> 한 번에 0.1%만 나가도 하루 10번 왕복하면 비용이 2%다. 실력이 비슷하면 수수료만큼 지는 구조다.</p><p><b>시간:</b> 직장인은 장중에 화면을 볼 수 없다. 그러다 보니 점심시간 5분 매매가 되고, 그건 사실상 동전 던지기다.</p></div>
+      <div class="box game"><h3>🎮 랭크전 동전</h3><p>오락실 철권 대전대에 앉았는데 맞은편이 프로게이머와 봇이다. 판마다 동전이 들어간다. 이기는 판이 있어도 동전 통이 먼저 빈다.</p></div>
+    </div>
+  </div></div>
+</section>
+
+<!-- 11 -->
+<section class="slide" style="--c:var(--lev);--cs:var(--lev-s)">
+  <div class="eyebrow"><span class="stage">MODIFIER</span><span class="lv e">경험자</span> 레버리지 · 선물</div>
+  <h2>레버리지: 디아블로 하드코어 모드 켜기</h2>
+  <p class="lead">레버리지는 직업이 아니라 어느 직업에든 붙는 난이도 옵션이다. 수익과 손실이 같이 커지고, 선물은 일정 손실에서 강제로 끝난다(청산).</p>
+  <div class="body"><div class="two">
+    <div class="box">
+      <div class="ctl"><label>배율 <output id="levOut"></output><input type="range" id="lev" min="1" max="50" step="1" value="10"></label></div>
+      <p class="cap">격리 마진 기준, 가격이 반대로 대략 이만큼 움직이면 증거금이 사라진다</p>
+      <div class="result" id="levDrop"></div>
+      <div class="hp"><div id="levHp"></div></div>
+      <p class="cap" id="levMsg"></p>
+    </div>
+    <div class="pc">
+      <div class="box"><h3>레버리지 ETF의 함정 (변동성 끌림)</h3><p>지수가 하루 +10%, 다음 날 −10%면 지수는 −1%다. 매일 2배를 맞추는 ETF는 1.2×0.8 = 0.96, 즉 <b>−4%</b>가 된다. 오르락내리락만 해도 깎인다.</p></div>
+      <div class="box game"><h3>🎮 하드코어 캐릭터</h3><p>노멀 모드에서는 죽어도 시체를 찾으러 가면 된다. 하드코어에서는 한 번 죽으면 캐릭터가 삭제된다. 청산이 바로 그 삭제다. 장비가 아무리 좋아도 한 번이면 끝이다.</p></div>
+    </div>
+  </div>
+  <p class="foot">청산 하락률은 100÷배율로 계산한 근사치다. 실제로는 유지증거금·수수료·펀딩비 때문에 더 가까운 가격에서 청산되며 거래소·상품마다 다르다.</p></div>
+</section>
+
+<!-- 12 -->
+<section class="slide">
+  <div class="eyebrow"><span class="stage">SAVE FILE 01</span><span class="lv e">경험자</span> 형의 실전 · 단타 계좌</div>
+  <h2>매일 레이드를 트라이했더니 수리비가 보상보다 컸다</h2>
+  <p class="lead">강의하는 사람도 깨졌다. 금액은 빼고 비율과 결정만 그대로 보여준다.</p>
+  <div class="body"><div class="two">
+<div class="log"><span class="d">// 2026-02 · 고배율 단타 전용 계좌</span>
+<span class="y">[mode]</span>   매일 단타 · 스캘핑 · 고배율
+<span class="y">[day N]</span>  추격 진입 → 손절 미설정 → 수동 손절
+<span class="r">[result]</span> 계좌 잔고 <b>-97%</b>
+<span class="g">[decision]</span> 단타 계좌 폐쇄
+           2계좌 체제: 현물(안전) + 스윙(4H/1D, 저배율)
+<span class="d">// 다음 날 일지</span>
+<span class="g">[next]</span>   SL/TP 걸고 계획대로 매매
+         "금액보다 패턴이 바뀐 게 중요하다"</div>
+    <div class="pc">
+      <div class="box"><h3>배운 것 세 줄</h3><ul><li>매일 판단하면 매일 실수할 기회가 생긴다.</li><li>손절 없는 매매는 매매가 아니라 도박이다.</li><li>시나리오를 미리 짜두면 급하게 들어가지 않는다.</li></ul></div>
+      <div class="box game" style="--c:var(--day);--cs:var(--day-s)"><h3>🎮 WoW 레이드 수리비</h3><p>공략 없이 매일 트라이하면 전멸할 때마다 장비 수리비가 나간다. 어느 순간 보스 드랍보다 수리비가 더 많이 나와 있다. 이럴 땐 공대를 해산하고 공략부터 다시 짜는 게 맞다.</p></div>
+    </div>
+  </div></div>
+</section>
+
+<!-- 13 -->
+<section class="slide">
+  <div class="eyebrow"><span class="stage">SAVE FILE 02</span><span class="lv e">경험자</span> 형의 실전 · BTC 롱 복기</div>
+  <h2>틀린 진입보다 아픈 건, 틀린 뒤에도 계속 들고 간 것이다</h2>
+  <p class="lead">방향을 틀린 것보다 규율을 지키지 않은 게 손실을 키웠다. 그래서 복기 결론이 “분석”이 아니라 “규칙 위반”이었다.</p>
+  <div class="body"><div class="two">
+<div class="log"><span class="d">// 2026-03 · BTCUSDT 무기한 선물</span>
+<span class="y">[entry]</span>  격리 롱 <b>11x</b>
+<span class="y">[coach]</span>  WAIT / NO 성격 판단
+<span class="r">[me]</span>     "버티면 오지 않을까" → 계속 보유
+<span class="r">[exit]</span>   증거금 대비 <b>-20.7%</b> 로 종료
+<span class="g">[verdict]</span> 규칙 위반 손실 (plan_violation)
+<span class="g">[hard rule]</span>
+  · 손절 숫자 + 무효화 문장 없으면 주문 금지
+  · WAIT/NO 나오면 보유 이유 다시 쓰기, 못 쓰면 축소
+  · 손실 직후 4시간봉 1개는 쉰다 (복수매매 금지)
+  · 4H 스윙은 5x 이하</div>
+    <div class="pc">
+      <div class="box"><h3>“이번만”이 제일 비싸다</h3><p>손절을 미루는 건 대부분 분석이 아니라 희망이다. 시장은 “이번만”이라는 말을 제일 좋아하고, 수업료는 꼬박꼬박 돈으로 받아 간다.</p></div>
+      <div class="box game" style="--c:var(--lev);--cs:var(--lev-s)"><h3>🎮 공대장이 “빠져!” 했는데</h3><p>불 장판 위에서 딜 욕심에 한 번만 더 누른다. 그 한 번에 공대 전체가 눕는다. 공대장의 콜(코치·규칙)은 내 딜 미터보다 우선이다.</p></div>
+    </div>
+  </div></div>
+</section>
+
+<!-- 14 -->
+<section class="slide">
+  <div class="eyebrow"><span class="stage">RULE 01</span><span class="lv b">입문</span> 생존 수학</div>
+  <h2>HP는 한 방에 깎이고, 포션으로는 천천히 찬다</h2>
+  <p class="lead">손실과 회복은 대칭이 아니다. −50%를 맞으면 +50%가 아니라 +100%를 벌어야 원금이다. 그래서 투자 법칙의 1번은 수익이 아니라 생존이다.</p>
+  <div class="body"><div class="two">
+    <div class="tw"><table class="num"><thead><tr><th>손실</th><th>원금 회복에 필요한 수익</th><th>체감</th></tr></thead><tbody>
+      <tr><td class="neg">−10%</td><td>+11.1%</td><td>포션 하나</td></tr>
+      <tr><td class="neg">−20%</td><td>+25.0%</td><td>여관 한 번</td></tr>
+      <tr><td class="neg">−30%</td><td>+42.9%</td><td>마을까지 걸어가기</td></tr>
+      <tr><td class="neg">−50%</td><td>+100%</td><td>레벨 다시 올리기</td></tr>
+      <tr><td class="neg">−80%</td><td>+400%</td><td>세이브 날아감</td></tr>
+      <tr><td class="neg">−97%</td><td>+3,233%</td><td>새 캐릭터</td></tr>
+    </tbody></table></div>
+    <div class="pc">
+      <div class="box"><div class="ctl"><label>내가 맞은 손실 <output id="ddOut"></output><input type="range" id="dd" min="5" max="95" step="5" value="50"></label></div>
+        <div class="hp"><div id="ddHp"></div></div>
+        <p class="cap">회복에 필요한 수익</p><div class="result" id="ddNeed"></div>
+        <p class="cap" id="ddYears"></p></div>
+      <div class="note" style="margin-top:0"><b>그래서:</b> 큰 손실 한 번을 피하는 게 작은 수익 열 번보다 낫다. 손절, 포지션 크기, 바벨은 모두 이 표 아랫줄로 내려가지 않으려고 있는 장치다.</div>
+    </div>
+  </div></div>
+</section>
+
+<!-- 15 -->
+<section class="slide">
+  <div class="eyebrow"><span class="stage">RULE 02</span><span class="lv e">경험자</span> 포지션 크기 · 기대값</div>
+  <h2>승률보다 손익비, 한 판보다 백 판</h2>
+  <p class="lead">한 번 매매로 잃을 돈을 계좌의 1~2%로 정한다(1R). 그러면 열 번 연속으로 틀려도 계좌는 살아 있다. 그리고 승률×이익과 패율×손실을 합쳐 백 판 뒤의 결과를 본다.</p>
+  <div class="body"><div class="two">
+    <div class="box">
+      <div class="ctl">
+        <label>승률 <output id="wrOut"></output><input type="range" id="wr" min="20" max="80" step="5" value="40"></label>
+        <label>손익비 (이길 때 벌기 ÷ 질 때 잃기) <output id="rrOut"></output><input type="range" id="rr" min="0.5" max="4" step="0.5" value="2"></label>
+        <label class="chk"><input type="checkbox" id="fee" checked> 매매비용 반영 (한 판에 0.1R)</label>
+      </div>
+      <p class="cap">한 판 기대값</p><div class="result" id="ev"></div>
+      <p class="cap" id="ev100"></p>
+    </div>
+    <div class="pc">
+      <div class="box"><h3>1% 룰 예시</h3><p>계좌 1,000만원 × 1% = 한 번에 잃어도 되는 돈 10만원. 손절 폭이 5%라면 포지션은 10만 ÷ 5% = <b>200만원</b>까지다. 손절 폭이 넓으면 포지션을 줄인다. 크기는 확신이 아니라 손절 폭이 정한다.</p></div>
+      <div class="box game"><h3>🎮 가챠 확률표</h3><p>한 번 뽑기의 결과는 운이다. 백 번 뽑으면 확률표가 결과를 정한다. 기대값이 음수인 뽑기는 아무리 오래 돌려도 지갑만 비운다. 내 매매 기록이 내 확률표다.</p></div>
+    </div>
+  </div></div>
+</section>
+
+<!-- 16 -->
+<section class="slide">
+  <div class="eyebrow"><span class="stage">CHARACTER SELECT</span><span class="lv b">입문</span> 나에게 맞는 직업 고르기</div>
+  <h2>스타팅 포켓몬 고르듯, 내 직업을 고른다</h2>
+  <p class="lead">네 문항에 답하면 메인 직업이 나온다. 정답은 없다. 내 시간과 성격으로 오래 할 수 있는 방법을 찾는 문항이다.</p>
+  <div class="body"><div class="two">
+    <div class="quiz" id="quiz"></div>
+    <div class="verdict" id="verdict"><h3>문항을 골라 보자</h3><p class="cap">답을 고를 때마다 결과가 바뀐다.</p></div>
+  </div></div>
+</section>
+
+<!-- 17 -->
+<section class="slide">
+  <div class="eyebrow"><span class="stage">MAIN + ALT</span><span class="lv b">입문</span><span class="lv e">경험자</span> 바벨로 섞기</div>
+  <h2>메인캐는 착실하게, 부캐로 실험한다</h2>
+  <p class="lead">하나만 고를 필요는 없다. 대부분의 돈은 적립·자산배분·배당 같은 메인 직업에 두고, 트레이딩 욕구는 상한을 정한 부캐 계좌에 가둔다.</p>
+  <div class="body">
+    <div class="ctl" style="max-width:640px"><label>부캐(트레이딩·실험) 비중 <output id="altOut"></output><input type="range" id="alt" min="0" max="30" step="5" value="10"></label></div>
+    <div class="sleeve" id="sleeve"></div>
+    <p class="cap" id="sleeveMsg"></p>
+    <div class="cols" style="--n:3;margin-top:14px">
+      <div class="box"><h3>규칙 1 · 구조 금지</h3><p>부캐가 망해도 메인캐 골드로 살리지 않는다. 부캐 계좌는 이체가 한 방향으로만 흐르게 한다.</p></div>
+      <div class="box"><h3>규칙 2 · 이익 이동</h3><p>부캐가 정한 상한을 넘으면 넘은 만큼 메인캐로 옮긴다. 이익을 다시 걸지 않는다.</p></div>
+      <div class="box"><h3>규칙 3 · 해금 조건</h3><p>비상금이 차 있고, 메인 적립이 자동으로 돌아가고, 손절 규칙을 써 둔 사람만 부캐를 만든다.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 18 -->
+<section class="slide">
+  <div class="eyebrow"><span class="stage">CLEAR</span> 오늘 가져갈 공략집</div>
+  <h2>투자 법칙 10줄</h2>
+  <div class="body">
+    <ol class="rules">
+      <li><b>살아남는 게 1번이다.</b> −50%는 +100%로만 메운다.</li>
+      <li><b>판을 고른 순간 확률이 정해진다.</b> 단타는 기본 확률이 나쁜 판이다.</li>
+      <li><b>직업은 시간과 성격으로 고른다.</b> 수익률표로 고르지 않는다.</li>
+      <li><b>메인은 자동으로 돈다.</b> 월급날 적립, 반기 리밸런싱.</li>
+      <li><b>배당은 총수익으로 본다.</b> 소의 몸무게부터 확인한다.</li>
+      <li><b>손절 숫자가 없으면 주문하지 않는다.</b> 무효화 문장까지 적는다.</li>
+      <li><b>한 판에 잃을 돈은 계좌의 1~2%다.</b> 크기는 손절 폭이 정한다.</li>
+      <li><b>레버리지는 하드코어 모드다.</b> 켤 이유가 없으면 끈다.</li>
+      <li><b>손실 직후에는 쉰다.</b> 복수 매매는 손가락이 차트보다 빠르다.</li>
+      <li><b>기록이 확률표다.</b> 일지 없이는 내 기대값을 모른다.</li>
+    </ol>
+    <div class="note"><b>이번 주 할 일:</b> ① 메인 직업 하나 정하고 자동이체 걸기 ② 트레이딩을 한다면 부캐 비중과 1R 금액 적기 ③ “빠지면 ___ 한다” 한 줄 적기. 이 강의는 투자 권유가 아니며 과거 통계와 사례는 미래 수익을 보장하지 않는다. 직업마다 원금 손실 위험이 있다.</div>
+  </div>
+</section>
+
+</main>
+<aside id="speakerCard" hidden aria-label="이 장의 발표 멘트"><strong>이 장은 이렇게 설명하기</strong><p id="speakerText"></p></aside>
+<nav class="nav"><button id="prev" aria-label="이전">‹</button><div class="prog"><div id="prog"></div></div><span class="cnt" id="cnt"></span><button id="talkToggle" class="talk-button" aria-expanded="false">발표 멘트</button><button id="next" aria-label="다음">›</button></nav>
+<script>
+const speakerNotes=[
+"오늘은 투자랑 트레이딩 방법을 게임 직업처럼 놓고 볼 거야. 어느 직업이 제일 센지가 아니라, 내 시간이랑 멘탈로 끝까지 키울 수 있는 직업을 고르는 게 목표야. 처음인 사람은 입문 표시, 매매해 본 사람은 경험자 표시를 더 챙겨 봐.",
+"보유 기간 순서로 지도를 그려봤어. 왼쪽은 턴제 RPG라 생각할 시간이 충분하고, 오른쪽으로 갈수록 격투 게임처럼 몇 프레임 안에 판단해야 해. 판단이 많아지면 실수랑 수수료도 같이 늘어. 레버리지는 직업이 아니라 어디든 붙일 수 있는 난이도 옵션이라 맨 끝에 뒀어.",
+"방법 고르기 전에 승률표부터 보자. 펀드매니저도 15년 동안 열에 아홉은 S&P500을 못 이겼어. 브라질에서 데이트레이딩을 300일 넘게 한 사람 중 97%가 손실이었고. 그리고 사람들은 펀드 수익률보다 매년 1.2%p 덜 벌었는데, 이유는 사고판 타이밍이었어. 단타를 하지 말라는 게 아니라, 확률이 나쁜 판이라는 걸 알고 앉자는 거야.",
+"첫 번째 직업은 인덱스 적립이야. 매달 같은 날 지수 ETF를 사는 거고, 판단할 게 거의 없다는 게 무기야. 드퀘에서 슬라임 노가다하는 거랑 같아. 지루하지만 경험치는 정직하게 쌓여. 문제는 지루함이야. 지루해서 보스방에 일찍 뛰어드는 사람이 대부분 전멸해.",
+"자산배분은 슬램덩크 북산 같은 거야. 강백호만 다섯 명이면 리바운드 잡을 사람이 없지. 주식, 채권, 현금처럼 다르게 움직이는 자산을 섞고, 반기마다 비율을 되돌려. 오른 걸 팔고 내린 걸 사야 해서 기분은 제일 나쁜 매매인데, 그래서 날짜를 미리 정해두는 거야. 2022년처럼 같이 빠지는 해도 있다는 건 기억하자.",
+"배당은 목장 게임이야. 소를 잘 키우면 매일 우유가 나오지. 하락장에도 분배금이 들어오니까 버티기 쉬워. 그런데 배당락만큼 가격은 내려가고, 분배율만 높은 상품은 소 살을 깎아서 우유를 맞추는 경우도 있어. 그래서 분배율 말고 총수익을 봐. 금융소득 2천만원 종합과세도 같이 기억하자.",
+"가치 투자는 중고 매장 구석에서 레어 소프트 찾기야. 감정 실력이 있어야 하고, 진짜 레어여도 몇 년 동안 아무도 안 찾을 수 있어. 실제로 2010년대 미국에서는 가치주가 10년 가까이 성장주한테 졌어. 싸다는 기준이랑 틀렸을 때 팔 조건을 같이 적어두지 않으면 그냥 물타기가 돼.",
+"모멘텀은 마리오카트 대시판이야. 최근에 강했던 게 한동안 더 강한 경향이 있어서 거기 올라타는 거지. 대신 코너 직전에 올라타면 그 속도 그대로 벽에 박아. 승률은 낮고 작은 손절이 연달아 나와. 그걸 견디고 규칙대로 내리는 사람한테 맞는 직업이야.",
+"스윙은 내가 지금 남겨둔 트레이딩 방식이야. 몬스터헌터처럼 보스 패턴을 보고 빈틈에만 칼을 넣어. 진입 전에 이 가격 지키면 A, 깨지면 B를 적고, 손절 숫자가 없으면 주문을 안 넣어. 그리고 아무것도 안 하는 날이 제일 많아. 관망도 매매야.",
+"단타는 오락실 철권 대전대에 동전 넣고 앉는 거야. 맞은편엔 프로랑 봇이 있고, 판마다 동전이 들어가. 수수료 0.1%라도 하루 열 번 왕복하면 2%야. 직장인은 장중에 화면도 못 보니까 결국 점심시간 5분 매매가 되는데, 그건 거의 동전 던지기야.",
+"레버리지는 디아블로 하드코어 모드야. 슬라이더를 움직여 보면 10배에서 대략 10%, 20배에서 5% 반대로 움직이면 증거금이 사라져. 실제로는 수수료 때문에 더 빨리 청산돼. 레버리지 ETF도 오르락내리락만 해도 깎이는 변동성 끌림이 있어. 플러스 10, 마이너스 10이면 지수는 1% 빠지는데 2배 ETF는 4% 빠져.",
+"이건 내 실전이야. 고배율 단타 전용 계좌를 매일 돌렸는데 결국 잔고가 97% 날아갔어. 추격 진입하고 손절을 안 걸었던 게 반복됐지. 그래서 그 계좌를 닫고 현물이랑 스윙 두 계좌로 바꿨어. 와우로 치면 공략 없이 매일 트라이하다가 수리비가 보상보다 커진 거야. 공대를 해산하고 공략부터 다시 짠 거지.",
+"두 번째 실전은 비트코인 11배 롱이야. 코치가 기다리라는 판단을 냈는데도 버티면 오지 않을까 하고 계속 들고 갔어. 결국 증거금 대비 20% 넘게 잃고 끝냈고, 복기 결론은 분석 실패가 아니라 규칙 위반이었어. 공대장이 빠지라고 했는데 불 장판에서 딜 욕심 부린 거야. 그다음부터 손절 숫자 없으면 주문 금지, 손실 직후엔 4시간 쉬기를 하드룰로 만들었어.",
+"투자 법칙 1번은 살아남기야. 마이너스 50%를 맞으면 플러스 50%가 아니라 플러스 100%를 벌어야 해. 슬라이더를 움직여 보면 손실이 커질수록 회복이 기하급수로 어려워지는 게 보여. HP는 한 방에 깎이는데 포션으로는 천천히 차는 거야. 그래서 큰 손실 한 번 피하는 게 작은 수익 열 번보다 나아.",
+"한 판에 잃을 돈을 계좌의 1~2%로 정하면 열 번 연속 틀려도 계좌는 살아 있어. 그리고 승률보다 손익비가 중요해. 승률 40%라도 이길 때 두 배 벌면 기대값이 플러스야. 반대로 승률 60%여도 손익비가 0.5면 마이너스지. 슬라이더로 직접 바꿔 보자. 매매비용을 켜면 기대값이 얼마나 깎이는지도 보여.",
+"이제 직업을 골라 보자. 네 문항이고 정답은 없어. 시간, 하락할 때 반응, 차트에 대한 흥미, 비상금 상태를 물어. 비상금이 없으면 트레이딩 직업은 잠겨 있어. 결과가 나오면 맞는 이유랑 하지 말 것을 같이 읽어 봐.",
+"하나만 고를 필요는 없어. 대부분은 메인캐에 두고, 트레이딩 욕구는 부캐 계좌에 가둬. 부캐가 망해도 메인캐 골드로 살리지 않고, 부캐가 상한을 넘게 벌면 넘은 만큼 메인으로 옮겨. 그리고 비상금, 자동 적립, 손절 규칙이 다 있어야 부캐를 만들 수 있어. 지난 강의의 바벨이랑 같은 모양이야.",
+"마지막으로 투자 법칙 10줄이야. 다 외울 필요는 없고, 살아남기, 손절 숫자 먼저, 한 판에 1~2%, 손실 직후엔 쉬기, 이 네 개만 기억해도 돼. 이번 주에는 메인 직업 하나 정해서 자동이체 걸고, 트레이딩을 한다면 부캐 비중이랑 1R 금액을 적어 보자."
+];
+
+const slides=[...document.querySelectorAll('.slide')];
+let cur=0;
+const $=id=>document.getElementById(id);
+function go(i){
+  cur=Math.max(0,Math.min(slides.length-1,i));
+  slides.forEach((s,k)=>s.classList.toggle('active',k===cur));
+  $('prog').style.width=((cur+1)/slides.length*100)+'%';
+  $('cnt').textContent=(cur+1)+' / '+slides.length;
+  $('speakerText').textContent=speakerNotes[cur]||'';
+  try{history.replaceState(null,'','#'+(cur+1));}catch(e){}
+}
+$('prev').onclick=()=>go(cur-1);
+$('next').onclick=()=>go(cur+1);
+document.addEventListener('keydown',e=>{
+  if(['INPUT','SELECT','TEXTAREA','BUTTON','A'].includes(e.target.tagName))return;
+  if(['ArrowRight','PageDown',' '].includes(e.key)){e.preventDefault();go(cur+1);}
+  if(['ArrowLeft','PageUp'].includes(e.key)){e.preventDefault();go(cur-1);}
+  if(e.key==='Home')go(0);
+  if(e.key==='End')go(slides.length-1);
+  if(e.key==='Escape'){$('speakerCard').hidden=true;$('talkToggle').setAttribute('aria-expanded','false');}
+});
+let tx=null,ty=null;
+document.addEventListener('touchstart',e=>{if(e.target.tagName==='INPUT'){tx=null;return;}tx=e.touches[0].clientX;ty=e.touches[0].clientY;},{passive:true});
+document.addEventListener('touchend',e=>{if(tx===null)return;const dx=e.changedTouches[0].clientX-tx,dy=e.changedTouches[0].clientY-ty;if(Math.abs(dx)>50&&Math.abs(dx)>Math.abs(dy)*1.5)go(cur+(dx<0?1:-1));tx=null;},{passive:true});
+$('talkToggle').onclick=()=>{const c=$('speakerCard');c.hidden=!c.hidden;$('talkToggle').setAttribute('aria-expanded',String(!c.hidden));};
+
+const hpColor=p=>p>60?'var(--good)':p>30?'var(--div)':'var(--bad)';
+
+// 레버리지 청산 근사
+function renderLev(){
+  const L=+$('lev').value,drop=100/L;
+  $('levOut').textContent=L+'배';
+  $('levDrop').textContent=L===1?'청산 없음 (현물)':'약 '+(drop>=10?drop.toFixed(0):drop.toFixed(1))+'% 반대로';
+  const hp=L===1?100:Math.max(2,Math.min(100,drop*2));
+  $('levHp').style.width=hp+'%';$('levHp').style.background=hpColor(hp);
+  $('levMsg').textContent=L===1?'현물은 가격이 0이 되지 않는 한 강제로 끝나지 않는다. 대신 하락은 그대로 맞는다.':L<=3?'저배율이어도 몇 번의 급락이면 닿는 거리다. 손절을 청산가보다 훨씬 앞에 둔다.':L<=10?'비트코인은 하루에 이만큼 움직이는 날이 드물지 않다. 하드코어 영역이다.':'캔들 하나, 뉴스 한 줄이면 닿는다. 캐릭터 삭제 버튼에 손을 올려둔 상태다.';
+}
+$('lev').addEventListener('input',renderLev);
+
+// 손실 회복
+function renderDD(){
+  const d=+$('dd').value,need=100*(1/(1-d/100)-1);
+  $('ddOut').textContent='−'+d+'%';
+  const hp=100-d;$('ddHp').style.width=hp+'%';$('ddHp').style.background=hpColor(hp);
+  $('ddNeed').textContent='+'+(need>=100?Math.round(need).toLocaleString('ko-KR'):need.toFixed(1))+'%';
+  const yrs=Math.log(1/(1-d/100))/Math.log(1.07);
+  $('ddYears').textContent='연 7%씩 번다고 가정하면 원금 회복까지 약 '+yrs.toFixed(1)+'년. 가정일 뿐이며 실제 회복 기간은 시장과 상품에 따라 다르다.';
+}
+$('dd').addEventListener('input',renderDD);
+
+// 기대값
+function renderEV(){
+  const w=+$('wr').value/100,r=+$('rr').value,f=$('fee').checked?0.1:0;
+  $('wrOut').textContent=Math.round(w*100)+'%';$('rrOut').textContent=r.toFixed(1)+' : 1';
+  const ev=w*r-(1-w)-f;
+  const el=$('ev');el.textContent=(ev>=0?'+':'')+ev.toFixed(2)+'R';el.style.color=ev>=0?'var(--good)':'var(--bad)';
+  $('ev100').textContent='100판 뒤 대략 '+(ev>=0?'+':'')+(ev*100).toFixed(0)+'R. 1R을 계좌의 1%로 두면 계좌 '+(ev>=0?'+':'')+(ev*100).toFixed(0)+'% 안팎(복리·연패 구간 제외한 단순 합).'+(ev<0?' 음수 기대값은 오래 할수록 더 잃는다.':'');
+}
+['wr','rr','fee'].forEach(id=>$(id).addEventListener('input',renderEV));
+
+// 직업 퀴즈
+const Q=[
+  {q:'일주일에 투자에 쓸 수 있는 시간은?',a:[['거의 없음',{idx:2,alloc:2,div:1}],['주말 1~2시간',{div:2,alloc:1,val:1}],['매일 30분 이상',{swing:2,mom:1,val:1}]]},
+  {q:'계좌가 −30%가 되면 나는?',a:[['잠을 못 잔다',{alloc:3,div:1}],['불편하지만 계속 산다',{idx:2,div:1}],['기회로 보고 더 산다',{idx:1,val:2,swing:1}]]},
+  {q:'차트·재무제표 보는 게',a:[['귀찮다',{idx:3}],['배당 들어오는 건 재밌다',{div:3}],['재밌어서 시간 가는 줄 모른다',{swing:2,mom:2,val:1}]]},
+  {q:'비상금(생활비 3~6개월)은?',a:[['아직 없다',{lock:1}],['채우는 중',{idx:1,alloc:1}],['다 찼다',{}]]}
+];
+const R={
+  idx:{n:'🛡️ 적립 수호자',c:'--idx',w:'시간을 거의 안 쓰고도 시장 평균을 가져간다. 프로의 열에 아홉을 이기는 기본값이다.',d:'지루하다고 테마주로 갈아타기. 하락장에 적립 멈추기.'},
+  alloc:{n:'⚖️ 균형 감독',c:'--alloc',w:'흔들림을 줄여 중간에 포기하지 않는 쪽을 고른다. 투자자 수익 격차가 가장 작은 방식이다.',d:'상승장에 뒤처진다고 비율 버리기. 리밸런싱 날짜 미루기.'},
+  div:{n:'🐄 배당 농부',c:'--div',w:'들어오는 현금을 보며 버티는 힘이 강하다. 은퇴 현금흐름 연습이 된다.',d:'분배율만 보고 고르기. 세후·총수익 계산 빼먹기.'},
+  val:{n:'🔍 감정사',c:'--val',w:'공부가 즐겁고 남들과 반대로 서는 게 편하다면 맞을 수 있다.',d:'싸다는 이유만으로 물타기. 팔 조건 없이 사기.'},
+  mom:{n:'🏎️ 추세 레이서',c:'--mom',w:'규칙대로 자르고 큰 추세를 기다릴 수 있다면 맞을 수 있다.',d:'작은 손절이 이어질 때 규칙 바꾸기. 코너 직전에 올라타기.'},
+  swing:{n:'🗡️ 스윙 헌터',c:'--swing',w:'차트를 보는 게 즐겁고 매일 시간이 있다. 단, 메인이 아니라 부캐로 시작한다.',d:'손절 없이 진입. 손실 직후 복수 매매. 배율 올리기.'}
+};
+const picks=Array(Q.length).fill(null);
+$('quiz').innerHTML=Q.map((x,i)=>`<div class="q"><p>${i+1}. ${x.q}</p><div class="opts">${x.a.map((o,j)=>`<button data-q="${i}" data-a="${j}" aria-pressed="false">${o[0]}</button>`).join('')}</div></div>`).join('');
+$('quiz').addEventListener('click',e=>{
+  const b=e.target.closest('button');if(!b)return;
+  const i=+b.dataset.q;picks[i]=+b.dataset.a;
+  b.parentElement.querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));
+  renderVerdict();
+});
+function renderVerdict(){
+  const v=$('verdict');
+  if(picks.some(p=>p===null)){const left=picks.filter(p=>p===null).length;v.style.removeProperty('--c');v.style.removeProperty('--cs');v.innerHTML=`<h3>${left}문항 남았다</h3><p class="cap">모두 고르면 메인 직업이 나온다.</p>`;return;}
+  const s={idx:0,alloc:0,div:0,val:0,mom:0,swing:0};let lock=false;
+  picks.forEach((p,i)=>{const sc=Q[i].a[p][1];for(const k in sc){if(k==='lock')lock=true;else s[k]+=sc[k];}});
+  if(lock){s.swing=0;s.mom=0;s.val=0;}
+  const top=Object.keys(s).sort((a,b)=>s[b]-s[a])[0],r=R[top];
+  v.style.setProperty('--c',`var(${r.c})`);v.style.setProperty('--cs',`var(${r.c}-s)`);
+  v.innerHTML=`<p class="cap">당신의 메인 직업</p><h3>${r.n}</h3><p><b>맞는 이유:</b> ${r.w}</p><p><b>하지 말 것:</b> ${r.d}</p>`+(lock?`<p class="cap">🔒 비상금이 없어서 트레이딩 계열 직업은 잠겨 있다. 비상금부터 채우면 해금된다.</p>`:'')+`<p class="cap">재미로 보는 분류이며 투자 성향 진단이나 권유가 아니다.</p>`;
+}
+
+// 바벨
+function renderAlt(){
+  const a=+$('alt').value,m=100-a;
+  $('altOut').textContent=a+'%';
+  $('sleeve').innerHTML=`<div style="flex:${m};background:var(--idx)">메인캐 ${m}%</div>`+(a?`<div style="flex:${a};background:var(--day)">부캐 ${a}%</div>`:'');
+  $('sleeveMsg').textContent=a===0?'트레이딩 없이 메인만 키우는 것도 완전한 전략이다.':a<=10?`부캐가 전부 사라져도 전체 계좌는 −${a}%다. 앞의 회복표에서 포션 한두 개로 메울 수 있는 크기다.`:`부캐가 전부 사라지면 전체 −${a}%다. 회복에 +${(100*(1/(1-a/100)-1)).toFixed(0)}%가 필요하다. 초보에게는 큰 크기다.`;
+}
+$('alt').addEventListener('input',renderAlt);
+
+renderLev();renderDD();renderEV();renderVerdict();renderAlt();
+go((parseInt(location.hash.slice(1))||1)-1);
+</script>
+</body>
+</html>

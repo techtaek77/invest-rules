@@ -7,3 +7,9 @@
 - 함께 보면 좋은 강의: [계좌 지도](https://techtaek77.github.io/money-map/account-map/)
 
 투자 권유가 아니며 과거 통계와 사례는 미래 수익을 보장하지 않는다.
+
+## 워뇨띠 리플레이 분석 (2026-10-20)
+
+- 페이지: [wonyotti-replay.html](https://techtaek77.github.io/invest-rules/wonyotti-replay.html)
+- 2018~2021 공개 원장, 90일 서한, 국장 12종목을 다시 계산하고 추세·역추세와 탈출 전략을 고르는 37장 강의 덱. 원문 스크린샷은 `img/`.
+- 투자 권유가 아니며 과거 데이터 분석이다.

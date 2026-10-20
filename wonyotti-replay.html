@@ -1,0 +1,1072 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>워뇨띠 리플레이 분석</title>
+<meta name="description" content="워뇨띠의 2018~2021 코인 체결 원장, 2026년 90일 서한, 2026년 10월 국장 12종목을 프로게이머 리플레이처럼 돌려 보고, 어디서 사고 어디서 파는지와 내 계좌에 옮길 케이스를 정리한 강의">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<style>
+:root{
+  --bg:#f6f5f1; --paper:#ffffff; --ink:#191b1a; --sub:#5f6662; --line:#e2e2dc; --soft:#eeede7;
+  --coin:#c46a1d; --coin-s:#fbecdc; --letter:#6b4fa3; --letter-s:#ece6f6; --kr:#167a8a; --kr-s:#dff0f2;
+  --me:#1f7a5a; --me-s:#e2f1ea; --warn:#a8801a; --warn-s:#f6eed8;
+  --good:#1f7a5a; --bad:#b8434a; --bad-s:#f7e1e2;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#111312; --paper:#1a1d1b; --ink:#ecedeb; --sub:#a2a9a5; --line:#2d312e; --soft:#222623;
+    --coin:#f0a35c; --coin-s:#3a2a19; --letter:#a98ce0; --letter-s:#2a2338; --kr:#59c0cf; --kr-s:#183034;
+    --me:#5cc49a; --me-s:#1d3229; --warn:#e3c063; --warn-s:#332b16;
+    --good:#5cc49a; --bad:#e8828a; --bad-s:#3a2224;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#111312; --paper:#1a1d1b; --ink:#ecedeb; --sub:#a2a9a5; --line:#2d312e; --soft:#222623;
+  --coin:#f0a35c; --coin-s:#3a2a19; --letter:#a98ce0; --letter-s:#2a2338; --kr:#59c0cf; --kr-s:#183034;
+  --me:#5cc49a; --me-s:#1d3229; --warn:#e3c063; --warn-s:#332b16;
+  --good:#5cc49a; --bad:#e8828a; --bad-s:#3a2224;
+}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{background:var(--bg);color:var(--ink);font-family:Pretendard,-apple-system,"Apple SD Gothic Neo",sans-serif;overflow:hidden;-webkit-font-smoothing:antialiased}
+.deck{position:fixed;inset:0}
+.slide{position:absolute;inset:0;display:none;flex-direction:column;padding:clamp(20px,4.5vw,60px) clamp(16px,6vw,96px) 76px;overflow-y:auto;overflow-x:hidden}
+.slide.active{display:flex;animation:in .25s ease}
+@keyframes in{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.eyebrow{display:flex;flex-wrap:wrap;align-items:center;gap:8px;font-size:clamp(.8rem,1.1vw,1rem);font-weight:700;letter-spacing:.04em;color:var(--sub);margin-bottom:10px}
+.stage{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;background:var(--c,var(--ink));color:var(--bg);padding:2px 8px;border-radius:6px;font-size:.85em;letter-spacing:.06em}
+.lv{padding:2px 9px;border-radius:999px;font-size:.8em;border:1px solid var(--line);background:var(--paper)}
+.lv.b{color:var(--good)}.lv.e{color:var(--bad)}
+h1{font-size:clamp(1.8rem,4.2vw,3.5rem);line-height:1.2;letter-spacing:-.03em;margin:0 0 14px}
+h2{font-size:clamp(1.4rem,3vw,2.4rem);line-height:1.25;letter-spacing:-.03em;margin:0 0 10px}
+.lead{font-size:clamp(1rem,1.6vw,1.25rem);color:var(--sub);line-height:1.6;margin:0 0 clamp(14px,2.6vh,26px);max-width:62em}
+.body{flex:1 0 auto;display:flex;flex-direction:column;justify-content:center;min-height:min-content}
+.cols{display:grid;gap:clamp(12px,1.6vw,22px);grid-template-columns:repeat(var(--n,3),minmax(0,1fr))}
+.two{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);gap:clamp(14px,2vw,28px);align-items:start}
+.box{background:var(--paper);border:1px solid var(--line);border-radius:18px;padding:clamp(14px,1.8vw,24px);min-width:0}
+.box h3{margin:0 0 8px;font-size:clamp(1rem,1.5vw,1.2rem)}
+.box p,.box li{margin:0;color:var(--sub);font-size:clamp(.9rem,1.2vw,1.04rem);line-height:1.6}
+.box p+p{margin-top:8px}
+.box ul,.box ol{margin:0;padding-left:1.1em}
+.box li+li{margin-top:4px}
+.tint{border-left:5px solid var(--c);background:var(--cs)}
+.tint h3{color:var(--c)}
+.tint p,.tint li{color:var(--ink)}
+.note{margin-top:clamp(14px,2.4vh,22px);padding:12px 16px;border-radius:12px;background:var(--soft);font-size:clamp(.85rem,1.15vw,1rem);color:var(--sub);line-height:1.6}
+.note b{color:var(--ink)}
+.note.warn{background:var(--warn-s)}
+.foot{font-size:.78rem;color:var(--sub);margin-top:14px;line-height:1.55}
+a{color:var(--kr)}
+.big{font-size:clamp(2rem,4.4vw,3.6rem);font-weight:800;letter-spacing:-.03em;line-height:1.05;color:var(--c,var(--ink))}
+.unit{font-size:.45em;font-weight:700;margin-left:2px}
+.cap{font-size:clamp(.82rem,1.1vw,.95rem);color:var(--sub);margin-top:6px;line-height:1.5}
+table{width:100%;border-collapse:separate;border-spacing:0;font-size:clamp(.8rem,1.1vw,.98rem);background:var(--paper);border:1px solid var(--line);border-radius:16px;overflow:hidden}
+th,td{padding:clamp(7px,1vh,11px) clamp(8px,1vw,13px);text-align:left;border-bottom:1px solid var(--line);vertical-align:top;line-height:1.45}
+tr:last-child td{border-bottom:0}
+th{background:var(--soft);color:var(--sub);font-weight:700}
+td:first-child{font-weight:800}
+.tw{overflow-x:auto;max-width:100%}
+.num{font-variant-numeric:tabular-nums;text-align:right;white-space:nowrap}
+.neg{color:var(--bad);font-weight:800}.pos{color:var(--good);font-weight:800}
+tr.hl td{background:var(--bad-s)}
+/* 막대 */
+.bars{display:grid;gap:10px}
+.bar{display:grid;grid-template-columns:64px minmax(0,1fr) 92px;gap:10px;align-items:center;font-size:clamp(.82rem,1.1vw,.96rem)}
+.bar i{display:block;height:22px;border-radius:6px;background:var(--soft);position:relative;overflow:hidden}
+.bar i b{position:absolute;inset:0 auto 0 0;background:var(--c,var(--coin));border-radius:6px}
+.bar em{font-style:normal;font-weight:800;text-align:right;font-variant-numeric:tabular-nums}
+/* 52주 위치 */
+.rng{display:grid;gap:7px}
+.rng .row{display:grid;grid-template-columns:96px minmax(0,1fr) 40px;gap:10px;align-items:center;font-size:clamp(.8rem,1.05vw,.94rem)}
+.rng .track{position:relative;height:12px;border-radius:999px;background:linear-gradient(90deg,var(--me-s),var(--soft) 50%,var(--bad-s))}
+.rng .dot{position:absolute;top:50%;width:16px;height:16px;border-radius:50%;transform:translate(-50%,-50%);background:var(--c);border:2px solid var(--paper)}
+.rng .row b{font-weight:700}
+.rng .row em{font-style:normal;font-weight:800;text-align:right;font-variant-numeric:tabular-nums}
+.axis{display:grid;grid-template-columns:96px minmax(0,1fr) 40px;gap:10px;font-size:.78rem;color:var(--sub);font-weight:700}
+.axis span{display:flex;justify-content:space-between}
+/* 버튼류 */
+.opts{display:flex;flex-wrap:wrap;gap:8px}
+.opts button,.tabs button{font:inherit;font-size:clamp(.82rem,1.05vw,.95rem);border:1px solid var(--line);background:var(--paper);color:var(--ink);border-radius:10px;padding:7px 12px;cursor:pointer}
+.opts button[aria-pressed=true],.tabs button[aria-pressed=true]{background:var(--ink);color:var(--bg);border-color:transparent}
+.tabs{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+.out{border:2px solid var(--c,var(--line));background:var(--cs,var(--paper));border-radius:16px;padding:clamp(14px,1.8vw,22px);min-height:120px}
+.out h3{margin:0 0 6px;color:var(--c,var(--ink));font-size:clamp(1.05rem,1.7vw,1.4rem)}
+.out p{margin:6px 0 0;line-height:1.6}
+.case{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:10px}
+.case div{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:10px 12px;font-size:clamp(.85rem,1.1vw,.98rem);line-height:1.55}
+.case div b{display:block;font-size:.8em;color:var(--sub);margin-bottom:3px;letter-spacing:.03em}
+.case .no{border-color:var(--bad)}.case .no b{color:var(--bad)}
+.check{display:grid;gap:8px}
+.check label{display:flex;gap:10px;align-items:flex-start;background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:9px 12px;font-size:clamp(.86rem,1.1vw,.98rem);line-height:1.45;cursor:pointer}
+.check input{margin-top:3px;accent-color:var(--me)}
+.fill{display:grid;gap:8px;margin-top:10px}
+.fill label{display:grid;gap:4px;font-size:.85rem;color:var(--sub);font-weight:700}
+.fill input,.fill select{font:inherit;font-size:.95rem;padding:8px 10px;border-radius:8px;border:1px solid var(--line);background:var(--paper);color:var(--ink);width:100%}
+.rulecard{margin-top:12px;padding:14px 16px;border-radius:12px;border:2px dashed var(--me);background:var(--me-s);font-size:clamp(.92rem,1.25vw,1.08rem);line-height:1.7}
+/* 로그·인용 */
+.log{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;background:#151816;color:#d9e6dd;border-radius:16px;padding:clamp(14px,1.8vw,20px);font-size:clamp(.76rem,1.02vw,.92rem);line-height:1.75;white-space:pre-wrap;overflow-x:auto}
+.log .r{color:#ff8a8a}.log .g{color:#8be0b3}.log .y{color:#f2d27a}.log .d{color:#8d9890}
+.quote{margin:0;padding:14px 18px;border-left:5px solid var(--letter);background:var(--letter-s);border-radius:0 14px 14px 0;font-size:clamp(.95rem,1.35vw,1.12rem);line-height:1.65}
+.quote cite{display:block;margin-top:6px;font-style:normal;font-size:.78em;color:var(--sub)}
+.qlog{display:grid;gap:6px;margin:0;padding:0}
+.qlog li{list-style:none;display:grid;grid-template-columns:82px minmax(0,1fr);gap:10px;align-items:baseline;font-size:clamp(.85rem,1.12vw,.98rem);line-height:1.5;padding:6px 0;border-bottom:1px dashed var(--line)}
+.qlog li time{font-family:ui-monospace,Menlo,monospace;font-weight:800;color:var(--c,var(--sub));font-size:.9em}
+.qlog li.c{--c:var(--coin)}.qlog li.l{--c:var(--letter)}.qlog li.k{--c:var(--kr)}.qlog li.down{--c:var(--bad)}.qlog li.now{--c:var(--me)}
+.layers{display:grid;gap:10px}
+.layer{display:grid;grid-template-columns:120px minmax(0,1fr);gap:12px;align-items:center;border-radius:14px;padding:12px 14px;background:var(--cs);border:1px solid var(--line)}
+.layer b{color:var(--c);font-size:clamp(.95rem,1.3vw,1.1rem)}
+.layer span{font-size:clamp(.86rem,1.12vw,.98rem);line-height:1.55}
+.verdict-chip{display:inline-block;padding:2px 9px;border-radius:999px;font-size:.8em;font-weight:800}
+.v-ok{background:var(--me-s);color:var(--good)}.v-weak{background:var(--warn-s);color:var(--warn)}.v-bad{background:var(--bad-s);color:var(--bad)}
+.rules{counter-reset:r;display:grid;grid-template-columns:1fr 1fr;gap:8px 22px;margin:0;padding:0}
+.rules li{list-style:none;counter-increment:r;position:relative;padding:8px 0 8px 46px;border-bottom:1px dashed var(--line);font-size:clamp(.9rem,1.22vw,1.05rem);line-height:1.5}
+.rules li::before{content:counter(r,decimal-leading-zero);position:absolute;left:0;top:7px;font-family:ui-monospace,Menlo,monospace;font-weight:800;color:var(--bg);background:var(--ink);border-radius:6px;padding:1px 6px;font-size:.85em}
+.cover{justify-content:center}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
+.tag{display:inline-block;padding:4px 11px;border-radius:999px;font-size:.85em;font-weight:700;background:var(--cs);color:var(--c)}
+.press{font-family:ui-monospace,Menlo,monospace;font-weight:800;letter-spacing:.1em;color:var(--sub);margin-top:24px;animation:blink 1.2s steps(2) infinite}
+@keyframes blink{50%{opacity:.25}}
+@media (prefers-reduced-motion:reduce){.press{animation:none}.slide.active{animation:none}}
+.nav{position:fixed;left:0;right:0;bottom:0;height:56px;display:flex;align-items:center;gap:12px;padding:0 clamp(12px,3vw,32px);background:linear-gradient(transparent,var(--bg) 40%)}
+.nav button{font:inherit;border:1px solid var(--line);background:var(--paper);color:var(--ink);border-radius:10px;width:42px;height:36px;cursor:pointer;font-size:1.1rem}
+.nav .talk-button{width:auto;padding:0 10px;font-size:.82rem;white-space:nowrap}
+.prog{flex:1;height:4px;background:var(--line);border-radius:4px;overflow:hidden}
+.prog div{height:100%;background:var(--coin);transition:width .2s}
+.cnt{font-variant-numeric:tabular-nums;color:var(--sub);font-size:.9rem;min-width:52px;text-align:right}
+#speakerCard{position:fixed;left:clamp(16px,6vw,96px);right:clamp(16px,6vw,96px);bottom:64px;background:var(--paper);color:var(--ink);border:2px solid var(--coin);border-radius:12px;padding:18px;z-index:10;font-size:clamp(.9rem,1.2vw,1.05rem);line-height:1.7;box-shadow:0 4px 24px #0003;max-height:45vh;overflow:auto}
+.shot{margin:0;background:var(--paper);border:1px solid var(--line);border-radius:14px;overflow:hidden;min-width:0}
+.shot a{display:block;max-height:min(52vh,460px);overflow:auto;background:#fff}
+.shot img{display:block;width:100%;height:auto}
+.shot figcaption{padding:8px 12px;font-size:.8rem;color:var(--sub);line-height:1.45;border-top:1px solid var(--line)}
+.shot figcaption b{color:var(--ink)}
+.src{display:grid;gap:6px;margin:0;padding:0}
+.src li{list-style:none;display:grid;grid-template-columns:118px minmax(0,1fr);gap:10px;font-size:clamp(.8rem,1.05vw,.93rem);line-height:1.5;padding:5px 0;border-bottom:1px dashed var(--line)}
+.src li b{color:var(--sub);font-size:.85em}
+.src li span{min-width:0;overflow-wrap:anywhere}
+.mono{font-family:ui-monospace,Menlo,monospace;font-size:.85em;overflow-wrap:anywhere}
+.menu{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.menu .m{background:var(--paper);border:1px solid var(--line);border-top:4px solid var(--c);border-radius:12px;padding:10px 12px;font-size:clamp(.8rem,1.02vw,.92rem);line-height:1.5;min-width:0}
+.menu .m b{display:block;color:var(--c);font-size:1.05em;margin-bottom:4px}
+.menu .m i{display:block;font-style:normal;color:var(--sub);margin-top:4px}
+.duo{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(12px,1.6vw,22px)}
+.kv{display:grid;grid-template-columns:96px minmax(0,1fr);gap:6px 10px;font-size:clamp(.85rem,1.1vw,.98rem);line-height:1.5;margin-top:8px}
+.kv dt{color:var(--sub);font-weight:700}.kv dd{margin:0}
+.ctl label{display:grid;grid-template-columns:1fr auto;gap:4px 12px;align-items:center;font-weight:600}
+.ctl output{font-weight:800;color:var(--coin);font-size:1.1em}
+.ctl input[type=range]{grid-column:1/-1;width:100%;accent-color:var(--coin)}
+.result{font-size:clamp(1.6rem,3.2vw,2.6rem);font-weight:800;letter-spacing:-.02em}
+[hidden]{display:none!important}
+@media (max-width:820px){
+  .cols,.two,.rules,.case{grid-template-columns:1fr}
+  .layer{grid-template-columns:1fr;gap:4px}
+  .src li{grid-template-columns:1fr;gap:2px}
+  .menu{grid-template-columns:1fr 1fr}.duo{grid-template-columns:1fr}
+  .bar{grid-template-columns:48px minmax(0,1fr) 76px}
+  .rng .row,.axis{grid-template-columns:78px minmax(0,1fr) 34px}
+  .nav{gap:6px}
+}
+</style>
+</head>
+<body><main class="deck">
+
+<!-- 1 표지 -->
+<section class="slide cover">
+  <div class="eyebrow"><span class="stage">REPLAY LOAD</span> 30~40분 · 전설의 리플레이 파일 3개 · 코인 하는 사람과 주식 하는 사람 모두</div>
+  <h1>워뇨띠 리플레이 분석<br>전설은 <b style="color:var(--coin)">어디서 사고</b>,<br><b style="color:var(--kr)">어디서 팔았나</b></h1>
+  <p class="lead">프로게이머 경기를 다시 보면 손 빠르기보다 세팅이 먼저 보인다. 오늘은 워뇨띠의 리플레이 세 개를 돌린다. 2018~2021 코인 체결 원장, 2026년 9월 90일 서한, 2026년 10월 국장 12종목. 그리고 끝에서 묻는다. <b>이 중에서 내 계좌로 가져올 수 있는 건 뭐지?</b></p>
+  <div class="chips">
+    <span class="tag" style="--c:var(--coin);--cs:var(--coin-s)">REPLAY 1 · 코인 래더</span>
+    <span class="tag" style="--c:var(--letter);--cs:var(--letter-s)">REPLAY 2 · 90일 서한</span>
+    <span class="tag" style="--c:var(--kr);--cs:var(--kr-s)">REPLAY 3 · 국장 턴제</span>
+    <span class="tag" style="--c:var(--me);--cs:var(--me-s)">내 계좌로 옮기기</span>
+  </div>
+  <div class="press">▶ PRESS → TO PLAY</div>
+  <p class="foot">← → 키, 스페이스, 스와이프로 넘긴다. <span class="lv b">입문</span>은 처음 듣는 사람용, <span class="lv e">경험자</span>는 매매해 본 사람용 심화다. 공개된 과거 자료와 제3자 재게시를 분석한 강의이며 투자 권유가 아니다. 모든 매매에 원금 손실 위험이 있다.</p>
+</section>
+
+<!-- 2 눈높이 -->
+<section class="slide">
+  <div class="eyebrow"><span class="stage">LOBBY</span><span class="lv b">입문</span> 시작 전에 하나만</div>
+  <h2>지금 어느 게임에서 접속했어?</h2>
+  <p class="lead">워뇨띠는 같은 사람인데 게임마다 플레이가 다르다. 그래서 내가 어느 게임에 앉아 있는지부터 정해야 그의 무엇을 볼지가 정해진다.</p>
+  <div class="body"><div class="two">
+    <div class="box">
+      <h3>1. 주로 하는 게임은?</h3>
+      <div class="opts" id="pollMarket">
+        <button data-v="coin" aria-pressed="false">코인 (선물 포함)</button>
+        <button data-v="stock" aria-pressed="false">주식·ETF</button>
+        <button data-v="both" aria-pressed="false">둘 다</button>
+        <button data-v="none" aria-pressed="false">아직 안 함</button>
+      </div>
+      <h3 style="margin-top:16px">2. 장중에 차트를 볼 수 있는 시간은?</h3>
+      <div class="opts" id="pollTime">
+        <button data-v="0" aria-pressed="false">거의 없음 (직장인)</button>
+        <button data-v="1" aria-pressed="false">하루 30분</button>
+        <button data-v="2" aria-pressed="false">하루 몇 시간</button>
+      </div>
+    </div>
+    <div class="out" id="pollOut"><h3>둘 다 고르면 오늘 볼 곳이 나온다</h3><p class="cap">손들기로 해도 된다. 답에 따라 집중할 리플레이가 달라진다.</p></div>
+  </div></div>
+</section>
+
+<!-- 3 강사 소개 -->
+<section class="slide">
+  <div class="eyebrow"><span class="stage">PLAYER CARD</span><span class="lv b">입문</span> 이 리플레이를 돌린 사람</div>
+  <h2>나는 전설의 리플레이를 보고도 반대로 플레이했다</h2>
+  <p class="lead">9월 22일 워뇨띠의 체결 원장이 공개됐을 때, 내 매매 기록이랑 나란히 놓고 봤다. 결론은 아팠다. 내 규칙은 이미 그의 방향과 대부분 맞는데, 실제 클릭이 반대였다.</p>
+  <div class="body"><div class="two">
+    <div class="box"><h3>📜 나와 워뇨띠의 타임라인</h3><ol class="qlog">
+      <li class="c"><time>2018~21</time><span>워뇨띠, BitMEX에서 14.5 BTC 입금 → 실현손익 3,537 BTC</span></li>
+      <li class="down"><time>2026.02</time><span>나, 고배율 단타 계좌 −97%로 폐쇄</span></li>
+      <li class="down"><time>2026.03</time><span>나, BTC 11배 롱. 코치가 기다리라는데 버팀. −20.7%</span></li>
+      <li class="c"><time>2026.09.22</time><span>워뇨띠 체결 원장 공개 + 90일 서한</span></li>
+      <li class="l"><time>2026.09.23</time><span>나, 원장 140만 행을 다시 세서 내 기록과 갭 분석</span></li>
+      <li class="k"><time>2026.10.16</time><span>워뇨띠 국장 12종목 캡처가 퍼짐. 단타 대신 실적주</span></li>
+      <li class="now"><time>지금</time><span>그 12종목을 실적·주가로 다시 계산한 걸 들고 왔다</span></li>
+    </ol></div>
+    <div class="box tint" style="--c:var(--bad);--cs:var(--bad-s)"><h3>갭 분석 한 줄</h3>
+      <p>내 규칙은 바이낸스 최대 3배, 손절가 먼저, 수익은 업비트로. 워뇨띠 데이터와 방향이 같았다.</p>
+      <p>그런데 실제 기록에는 손절 없는 추격 숏, 코치 NO를 무시한 수익, 11배 장기 보유가 있었다.</p>
+      <p><b>부족한 건 기법이 아니라 규칙과 클릭 사이의 간격이었다.</b></p>
+    </div>
+  </div></div>
+</section>
+
+<!-- 4 문제 -->
+<section class="slide">
+  <div class="eyebrow"><span class="stage">BUG REPORT</span><span class="lv b">입문</span> 전설 따라하기가 망하는 세 가지 방식</div>
+  <h2>리플레이를 보고 손가락만 따라 하면 진다</h2>
+  <p class="lead">프로의 APM을 따라 하면 손목만 나간다. 전설을 따라 하다 망하는 패턴은 대개 이 셋이다.</p>
+  <div class="body"><div class="cols">
+    <div class="box tint" style="--c:var(--bad);--cs:var(--bad-s)"><h3>① 종목 복사</h3><p>"워뇨띠가 산 거 나도 산다." 그런데 12종목 중 JYP는 보도 추정으로 전체의 약 0.03%였다. 비중을 모르고 이름만 따라 하면 그의 시험용 한 칸을 내 메인으로 사게 된다.</p></div>
+    <div class="box tint" style="--c:var(--bad);--cs:var(--bad-s)"><h3>② 빈도 복사</h3><p>코인 포지션 보유시간 중앙값은 25.9분이었다. 그는 하루 10시간씩 차트를 봤다. 직장인이 이걸 따라 하면 점심시간 5분 동전 던지기가 된다.</p></div>
+    <div class="box tint" style="--c:var(--bad);--cs:var(--bad-s)"><h3>③ 생존편향</h3><p>원장에는 초기 강제청산 흔적(59행, 대부분 2018년)이 있다. 살아남은 결과만 보고 초반의 고위험까지 영웅담으로 삼으면, 나는 청산된 쪽 통계에 들어간다.</p></div>
+  </div>
+  <div class="note"><b>그래서 오늘은</b> "무엇을 샀나"보다 "어떤 조건에서 사고, 어떤 조건에서 팔았나"를 본다. 조건은 옮길 수 있지만 종목과 빈도는 옮길 수 없다.</div></div>
+</section>
+
+<!-- 5 해결 지도 -->
+<section class="slide">
+  <div class="eyebrow"><span class="stage">MAP</span><span class="lv b">입문</span> 오늘의 지도</div>
+  <h2>게임은 바뀌어도 세팅값은 그대로였다</h2>
+  <p class="lead">워뇨띠는 코인에서는 차트를 보고, 주식에서는 실적을 본다. 사는 이유는 게임마다 다르다. 그런데 계좌를 지키는 방식은 세 리플레이에서 똑같이 반복된다.</p>
+  <div class="body"><div class="layers">
+    <div class="layer" style="--c:var(--coin);--cs:var(--coin-s)"><b>바뀌는 층<br>= 타점</b><span>코인: 캔들·거래량·추세, 지정가로 짧게. 국장: 매출·영업이익 신고점, 주가가 아직 안 따라온 종목을 약 3개월 시야로.</span></div>
+    <div class="layer" style="--c:var(--letter);--cs:var(--letter-s)"><b>바뀌는 층<br>= 판단 틀</b><span>서한에서 보인 3요소: 가치(싼가) + 추세(지금 오르나) + 주목도(돈이 몰리나). 하나만으로는 사지도, 숏치지도 않는다.</span></div>
+    <div class="layer" style="--c:var(--me);--cs:var(--me-s)"><b>안 바뀌는 층<br>= 생존</b><span>계좌 대비 위험을 낮게, 틀린 포지션은 오래 끌지 않기, 한 종목과 사랑에 빠지지 않기, 번 돈은 판 밖으로 빼기, 돈이 커질수록 느리게.</span></div>
+  </div>
+  <div class="note">이 강의는 위 두 층을 리플레이로 확인하고, 마지막 층을 내 계좌에 옮기는 순서로 간다.</div></div>
+</section>
+
+<!-- 6 강의 소개 -->
+<section class="slide">
+  <div class="eyebrow"><span class="stage">QUEST</span><span class="lv b">입문</span> 오늘 끝나고 손에 남는 것</div>
+  <h2>외우고 가는 게 아니라, 세 장을 만들고 간다</h2>
+  <div class="body"><div class="cols">
+    <div class="box tint" style="--c:var(--coin);--cs:var(--coin-s)"><h3>🗺️ 내 게임 구분표</h3><p>코인·국장·배당 계좌마다 "무엇을 보고 사는지"를 한 줄씩. 한 게임의 조작법을 다른 게임에 가져가지 않게.</p></div>
+    <div class="box tint" style="--c:var(--kr);--cs:var(--kr-s)"><h3>🃏 살 때·팔 때 카드 1장</h3><p>진입 조건, 가격 손절, 시간 손절, 수익 인출. 실습 장에서 체크하면 문장으로 만들어진다.</p></div>
+    <div class="box tint" style="--c:var(--me);--cs:var(--me-s)"><h3>📅 이번 주 행동 1개</h3><p>날짜가 박힌 한 줄. 예: 10/22 서한 1차 검증 기록, 10/30 기아 실적 관찰.</p></div>
+  </div>
+  <div class="note"><b>순서</b> REPLAY 1 코인 원장(원문·영상 검산 포함 9장) → REPLAY 2 서한(2장) → REPLAY 3 국장(5장) → 공통 법칙 → PART 4 사고팔 때의 문법(추세·역추세·탈출 메뉴·내 매매법) → 케이스 11개 → 실습 → 근거표 → 정리 → 자료실(원본 링크·드라이브)</div></div>
+</section>
+
+<!-- 6b R1 원본 -->
+<section class="slide">
+  <div class="eyebrow"><span class="stage" style="--c:var(--coin)">REPLAY 1-0</span><span class="lv b">입문</span> 리플레이 파일 검사 · 본인이 올린 원문</div>
+  <h2>먼저 원본부터: 그는 디시에 "전부" 올렸다</h2>
+  <p class="lead">2026-09-22 오전에 예고하고, 오후에 구글 드라이브 링크를 올렸다. 예고에 적은 숫자(14.4 BTC 입금, 3,537 BTC 실현손익, 약 140만 행, 약 23,000 주문)를 내가 파일로 다시 셌더니 그대로 맞았다.</p>
+  <div class="body"><div class="cols" style="--n:2">
+    <figure class="shot"><a href="img/dc-notice.png" target="_blank" rel="noopener"><img src="img/dc-notice.png" alt="워뇨띠 인증 예고 게시글" loading="lazy"></a><figcaption><b>① 예고</b> 디시 차트 마이너 갤러리 「워뇨띠」 고정닉, 2026-09-22 11:28. 광고 배너만 잘라냈다. 캡처 2026-10-20</figcaption></figure>
+    <figure class="shot"><a href="img/dc-reveal.png" target="_blank" rel="noopener"><img src="img/dc-reveal.png" alt="워뇨띠 거래내역 공개 게시글" loading="lazy"></a><figcaption><b>② 공개</b> 같은 갤러리, 2026-09-22 17:46. 파일 5개 목록과 드라이브 링크, "2차 제작물·거래봇 유료판매는 피해 달라"는 당부. 캡처 2026-10-20</figcaption></figure>
+  </div>
+  <p class="foot">이미지를 누르면 원본 크기로 열린다. 원문 링크와 드라이브 주소는 마지막 자료실 장에 모았다.</p></div>
+</section>
+
+<!-- 7 R1 체결의 진실 -->
+<section class="slide">
+  <div class="eyebrow"><span class="stage" style="--c:var(--coin)">REPLAY 1-1</span><span class="lv b">입문</span> 코인 래더 · 2018-03 ~ 2021-12 BitMEX 원장</div>
+  <h2>140만 번 클릭한 게 아니라, 2만 3천 번 판단했다</h2>
+  <p class="lead">체결 행은 144만 줄이다. 그런데 독립 주문으로 묶으면 23,417개. 한 주문이 평균 61조각으로 나뉘어 체결됐다. APM이 아니라 빌드오더를 봐야 한다.</p>
+  <div class="body"><div class="cols" style="--n:4">
+    <div class="box"><div class="big" style="--c:var(--coin)" data-k="limit"></div><p class="cap">주문 중 지정가 비중. 시장가는 2.65%뿐</p></div>
+    <div class="box"><div class="big" style="--c:var(--coin)" data-k="maker"></div><p class="cap">BTC 체결 수량 중 메이커. 수수료를 받으면서 체결했다</p></div>
+    <div class="box"><div class="big" style="--c:var(--coin)" data-k="btc"></div><p class="cap">전체 주문 중 BTC 비중. 알트는 곁다리</p></div>
+    <div class="box"><div class="big" style="--c:var(--coin)" data-k="win"></div><p class="cap">BTC 포지션 승률. 날짜로 보면 손실일이 3일에 1일</p></div>
+  </div>
+  <div class="two" style="margin-top:16px">
+    <div class="box"><h3>롱도 숏도 쳤다</h3><div class="tw"><table id="tLS"></table></div></div>
+    <div class="box tint" style="--c:var(--coin);--cs:var(--coin-s)"><h3>여기서 보이는 사는 자리</h3><ul><li>쫓아가서 시장가로 사지 않는다. 오는 가격을 지정가로 기다린다</li><li>가장 잘 아는 판(BTC)에 집중. 2025 인터뷰에서도 알트 타율이 낮았다고 본인이 인정</li><li>방향 신앙이 없다. 숏 수익이 롱보다 컸다</li></ul></div>
+  </div></div>
+</section>
+
+<!-- 8 R1 느려졌다 -->
+<section class="slide">
+  <div class="eyebrow"><span class="stage" style="--c:var(--coin)">REPLAY 1-2</span><span class="lv e">경험자</span> 돈이 커질수록 플레이가 바뀌었다</div>
+  <h2>초반엔 러시, 후반엔 운영. 계좌 대비 위험은 5분의 1로</h2>
+  <p class="lead">2018년엔 포지션 1,755번에 보유 중앙값 12분이었다. 2021년엔 124번에 15시간. 포지션 절대 크기는 100배 커졌지만 계좌 대비 익스포저는 3.5배에서 0.7배로 내려갔다.</p>
+  <div class="body"><div class="two">
+    <div class="box"><h3>계좌 대비 익스포저 중앙값 (배)</h3><div class="bars" id="bExp"></div><h3 style="margin-top:16px">보유시간 중앙값 (분)</h3><div class="bars" id="bHold"></div></div>
+    <div class="box"><h3>연도별 원장</h3><div class="tw"><table id="tYear"></table></div>
+      <div class="note" style="margin-top:12px"><b>계좌 대비 익스포저</b> = 전체 포지션 명목가치 ÷ 계좌 전체. 거래소 화면의 "10x"는 증거금 기준이라 다르다. 10배를 띄워도 계좌의 10%만 넣으면 계좌 기준으로는 1배다.</div></div>
+  </div></div>
+</section>
+
+<!-- 9 R1 고익스포저 -->
+<section class="slide">
+  <div class="eyebrow"><span class="stage" style="--c:var(--coin)">REPLAY 1-3</span><span class="lv e">경험자</span> 세게 들어간 판의 성적표</div>
+  <h2>5배 넘게 실은 판만 모으면, 전설도 마이너스였다</h2>
+  <p class="lead">포지션을 계좌 대비 익스포저 구간으로 나눴다. 1~3배 구간이 가장 많이 벌었고, 5배 초과 676번은 합계 손실이었다.</p>
+  <div class="body"><div class="tw"><table id="tExpB"></table></div>
+  <div class="note warn"><b>단정 금지</b> 연도와 자산 규모가 섞여 있어 "5배가 손실의 원인"이라고 말할 수는 없다. 말할 수 있는 건 하나다. <b>고배율이 그의 성공 조건이었다는 증거는 원장에 없다.</b> 오히려 반대 신호가 강하다.</div></div>
+</section>
+
+<!-- 10 R1 오래 버틴 포지션 -->
+<section class="slide">
+  <div class="eyebrow"><span class="stage" style="--c:var(--coin)">REPLAY 1-4</span><span class="lv e">경험자</span> 파는 자리 ① 시간</div>
+  <h2>일주일 넘게 버틴 포지션은 달러로 합계 −404만</h2>
+  <p class="lead">보유시간이 길어질수록 승률이 떨어졌고, 7일을 넘긴 38판은 달러 환산 합계가 음수였다(BTC 기준으로는 +158 BTC라 단위에 따라 다르다). 가장 큰 손실은 2021년 9~10월, 25일 동안 들고 간 숏이었다.</p>
+  <div class="body"><div class="two">
+    <div class="box"><h3>보유시간별 BTC 포지션</h3><div class="tw"><table id="tHoldB"></table></div></div>
+    <div class="pc" style="display:grid;gap:12px">
+      <div class="log"><span class="d"># 최대 손실 포지션 (원장 재구성)</span>
+기간   2021-09-27 → 2021-10-22
+방향   <span class="y">SHORT</span>
+보유   약 25.3일
+결과   <span class="r">−195.63 BTC (종료가 환산 약 −$11.6M)</span></div>
+      <div class="box tint" style="--c:var(--coin);--cs:var(--coin-s)"><h3>시간은 손절을 대신하지 않는다</h3><p>틀린 단타를 "중장기"로 개명하는 순간 위험해진다. 전설도 여기서 제일 크게 맞았다.</p></div>
+    </div>
+  </div></div>
+</section>
+
+<!-- 11 R1 출금 -->
+<section class="slide">
+  <div class="eyebrow"><span class="stage" style="--c:var(--coin)">REPLAY 1-5</span><span class="lv b">입문</span> 파는 자리 ② 번 돈을 판 밖으로</div>
+  <h2>번 돈의 80%를 거래소 밖으로 뺐다</h2>
+  <p class="lead">입금은 14.5 BTC였다. 실현손익 3,537 BTC 중 2,833 BTC를 출금했다. 거래소 잔고를 끝없이 굴리지 않고, 커질수록 더 많이 창고로 옮겼다.</p>
+  <div class="body"><div class="two">
+    <div class="box"><h3>연도별 출금 (BTC)</h3><div class="bars" id="bWd"></div></div>
+    <div class="box"><h3>지갑 흐름</h3><div class="tw"><table id="tWallet"></table></div>
+      <div class="note" style="margin-top:12px"><b>게임으로 치면</b> 던전에서 주운 골드를 매번 마을 창고에 넣고 다시 들어간 거다. 전멸해도 창고는 남는다.</div></div>
+  </div></div>
+</section>
+
+<!-- 12a R1 파레토 -->
+<section class="slide">
+  <div class="eyebrow"><span class="stage" style="--c:var(--coin)">REPLAY 1-6</span><span class="lv e">경험자</span> 승률이 아니라 꼬리가 벌었다</div>
+  <h2>BTC 포지션 상위 1%가 순이익을 전부 벌었다</h2>
+  <p class="lead">BTC 완결 포지션 2,589개를 순손익 순으로 줄 세웠다. 상위 26개(1%)의 합이 전체 순이익보다 컸다. 나머지 2,563개는 합치면 거의 0이었다. 75%가 넘는 승률은 계좌를 지키는 역할이었고, 돈은 며칠씩 들고 간 몇 판에서 나왔다.</p>
+  <div class="body"><div class="two">
+    <div class="box"><h3>줄 세운 결과</h3><div class="tw"><table id="tPareto"></table></div></div>
+    <div style="display:grid;gap:12px">
+      <div class="box tint" style="--c:var(--coin);--cs:var(--coin-s)"><h3>보유시간이 두 종류였다</h3><div class="bars" id="bHold2"></div><p class="cap">전체 중앙값은 26분인데 상위 31개는 중앙값 약 4.3일. 이긴 판은 길게, 틀린 판은 짧게.</p></div>
+      <div class="note warn" style="margin-top:0"><b>같이 기억할 것</b> 7일을 넘긴 포지션은 달러 환산 합계가 손실이었고 최대 손실도 25일 숏이었다(REPLAY 1-4). "오래 들고 가라"가 아니라 <b>맞는 판만</b> 오래 들고 간 거다.</div>
+    </div>
+  </div>
+  <p class="foot">계산: 볼트에 남은 BTC(XBTUSD) 포지션 재구성 파일로 다시 셌다. 46개 전 종목 기준인 유튜브 해설의 "상위 1%(31개) = 수익 91%"와 기준이 달라 숫자도 다르다.</p></div>
+</section>
+
+<!-- 12b R1 영상 검산 -->
+<section class="slide">
+  <div class="eyebrow"><span class="stage" style="--c:var(--coin)">REPLAY 1-7</span><span class="lv e">경험자</span> 남의 해설도 원장으로 검산하기</div>
+  <h2>유튜브 해설을 원장에 대 보니, 하나는 반대였다</h2>
+  <p class="lead">공개 원장을 해설한 영상이 많다. 그중 정리가 잘된 영상 하나의 숫자를 내 재계산과 나란히 놓았다. 대부분 맞았지만 "5·19 폭락 때 롱으로 갈아타서 방어했다"는 장면은 원장과 반대였다.</p>
+  <div class="body"><div class="two">
+    <div class="box"><div class="tw"><table id="tVerify"></table></div></div>
+    <div style="display:grid;gap:12px">
+      <div class="log"><span class="d"># 2021-05 원장 재구성 (BTC 포지션)</span>
+05-17 18:08 → 05-19 01:55  SHORT  <span class="g">+24.7 BTC</span>
+05-19 01:55 → 05-19 13:33  <span class="y">LONG</span>   <span class="r">−172.4 BTC</span>  <span class="d">40,217 → 34,356</span>
+05-19 13:33 → 05-19 16:53  SHORT  <span class="r">−42.2 BTC</span>
+05-19 16:59 → 05-20 00:39  SHORT  <span class="g">+48.9 BTC</span>
+<span class="d"># 숏 익절 직후의 롱 전환이 전체 4번째 큰 손실</span></div>
+      <div class="box tint" style="--c:var(--bad);--cs:var(--bad-s)"><h3>스위칭은 양날의 검</h3><p>틀리면 바로 반대로 가는 유연성은 2020년 3월에는 통했다(롱 손절 뒤 숏 +18, +30 BTC). 2021년 5월 19일에는 같은 동작으로 그날 시작한 손실 포지션 합계가 약 −216 BTC였다.</p></div>
+    </div>
+  </div>
+  <p class="foot">영상: <a href="https://www.youtube.com/watch?v=hNvnfNKLs3w" target="_blank" rel="noopener">「워뇨띠 매매내역 한방정리」 YouTube</a>. 영상의 전 종목 통계와 내 BTC 재구성은 범위가 달라 숫자가 조금씩 다를 수 있다.</p></div>
+</section>
+
+<!-- 12 R1 정리 -->
+<section class="slide">
+  <div class="eyebrow"><span class="stage" style="--c:var(--coin)">REPLAY 1 요약</span><span class="lv b">입문</span> 코인에서 그가 사고판 자리</div>
+  <h2>코인 래더 빌드오더</h2>
+  <div class="body"><div class="cols" style="--n:2">
+    <div class="box tint" style="--c:var(--good);--cs:var(--me-s)"><h3>🟢 사는 자리</h3><ul>
+      <li>캔들·거래량·추세로 판을 읽고, 오는 가격을 <b>지정가로 기다린다</b></li>
+      <li>잘 아는 판에 집중: <b>BTC 먼저</b>, 그다음 ETH</li>
+      <li>방향 신앙 없이 <b>롱·숏 둘 다</b> (상위 31판 중 숏 23판)</li>
+      <li>계좌 대비 <b>1~3배 안쪽</b>이 가장 많이 번 구간</li>
+    </ul></div>
+    <div class="box tint" style="--c:var(--bad);--cs:var(--bad-s)"><h3>🔴 파는 자리</h3><ul>
+      <li>본인 말로 "패턴이 깨지면 빨리 손절"</li>
+      <li>틀린 판은 짧게, 맞는 판은 길게: 상위 31판 보유 중앙값 <b>약 4.3일</b>, 그러나 <b>7일 초과는 달러 환산 합계 음수</b></li>
+      <li>수익은 <b>거래소 밖으로</b>: 실현손익의 80% 출금</li>
+      <li>돈이 커지면 <b>배율과 횟수를 줄인다</b></li>
+    </ul></div>
+  </div>
+  <div class="note warn"><b>복사 금지 목록</b> 25분 초단타(그는 하루 10시간 봤다), 하드스탑 거의 없음(그는 화면 앞에 있었다), 수십 번 분할(대형 물량 때문), 2018년 고위험 구간(생존편향).</div></div>
+</section>
+
+<!-- 13 R2 서한 -->
+<section class="slide">
+  <div class="eyebrow"><span class="stage" style="--c:var(--letter)">REPLAY 2</span><span class="lv e">경험자</span> 2026-09-22 · 연말까지의 90일 서한</div>
+  <h2>싸다고 사지 않고, 비싸다고 숏치지 않는다</h2>
+  <p class="lead">원장 공개와 함께 올라온 서한은 체결의 해설서가 아니라 연말 전망 기록이다. 결론보다 판단 틀이 보인다.</p>
+  <div class="body"><div class="two">
+    <div class="box"><div class="tw"><table>
+      <tr><th>시장</th><th>그의 판단</th><th>틀의 쓰임</th></tr>
+      <tr><td>코인</td><td>상승. BTC 적정가 추정 $85K, 캔들·거래량·추세가 강한 상승 신호</td><td>가치 + 추세 + 주목도 세 개가 같은 방향</td></tr>
+      <tr><td>나스닥</td><td>고평가지만 완만한 상승. 섣불리 숏 안 함</td><td>가치만 보고 숏치면 2~3년 고통일 수 있다</td></tr>
+      <tr><td>코스피</td><td>과거 기준 초고평가, 다만 주주환원이라는 구조 변화. 이익이 반도체에 쏠려 있고 2027말~28초 수요 둔화를 "매우 높은 확률"로 예상</td><td>삼성전자·하이닉스는 장기매수도 매도도 권하지 않고, 큰 출렁임마다 <b>무릎에 사서 어깨에 판다</b></td></tr>
+    </table></div></div>
+    <div style="display:grid;gap:12px">
+      <div class="box tint" style="--c:var(--letter);--cs:var(--letter-s)"><h3>서한식 기록 5칸</h3><ol><li>현재 판단</li><li>근거</li><li>판단을 깨는 변수</li><li>내가 모르는 것</li><li>사후 검증 시점</li></ol></div>
+      <div class="note" style="margin-top:0"><b>검증일</b> 1차 10/22 · 2차 11/22 · 최종 12/31. 오늘 기준으로 아직 적중을 판정할 수 없다. 그는 리딩방·봇 판매를 하지 않는다고 서한에 적었다. 공개 원장으로 만든 유료 "워뇨띠 봇"은 사칭 위험부터 의심한다.</div>
+    </div>
+  </div>
+  <p class="foot">출처: <a href="https://gall.dcinside.com/mgallery/board/view/?id=m2liquidity&no=84150">디시 재게시</a> · <a href="https://economybloc.com/article/116705/">보도 요약</a></p></div>
+</section>
+
+<!-- 13b R2 원문 -->
+<section class="slide">
+  <div class="eyebrow"><span class="stage" style="--c:var(--letter)">REPLAY 2 원문</span><span class="lv e">경험자</span> 서한의 코스피 단락</div>
+  <h2>"무릎에 사서 어깨에 판다"는 반도체 얘기였다</h2>
+  <p class="lead">원문을 다시 읽으면 이 문장은 코스피 단락 안에서 <b>삼성전자·하이닉스</b>를 두고 한 말이다. 국장 전체 원칙이라고 적은 곳은 없다. 그리고 3주 뒤 공개된 12종목에는 반도체가 하나도 없다.</p>
+  <div class="body"><div class="two">
+    <figure class="shot"><a href="img/letter-kospi.png" target="_blank" rel="noopener"><img src="img/letter-kospi.png" alt="90일 서한 코스피 단락" loading="lazy"></a><figcaption><b>90일 서한 재게시</b> 디시 유동성 마이너 갤러리, 2026-09-23. 원문은 원장 ZIP 안 서한 파일이며 이 게시글은 제3자 재게시다. 캡처 2026-10-20</figcaption></figure>
+    <div style="display:grid;gap:12px">
+      <div class="box tint" style="--c:var(--letter);--cs:var(--letter-s)"><h3>원문에서 읽히는 순서</h3><ol><li>주주환원은 코스피가 고평가를 받을 근거</li><li>그러나 이익이 반도체에 몰려 있다</li><li>2027말~28초 수요 감소를 높은 확률로 예상</li><li>그래서 반도체는 장기 방향 대신 출렁임마다 무릎·어깨</li><li>변수: 주주환원이 계속되는가</li></ol></div>
+      <div class="note warn" style="margin-top:0"><b>강의에서 조심할 점</b> 12종목을 "무릎에서 산 것"으로 보는 건 서한의 방식을 다른 종목에 넓혀 본 <b>내 해석</b>이다. 본인이 그렇게 설명한 적은 없다.</div>
+    </div>
+  </div></div>
+</section>
+
+<!-- 14 R3 출처 -->
+<section class="slide">
+  <div class="eyebrow"><span class="stage" style="--c:var(--kr)">REPLAY 3-1</span><span class="lv b">입문</span> 2026-10-16 · 국장 12종목 캡처</div>
+  <h2>리플레이 파일부터 검사하자: 이건 원본이 아니다</h2>
+  <p class="lead">캡처는 디시 게시판 표기 "워뇨띠"로 퍼졌고 Threads와 기사로 재공유됐다. 원글 URL과 계좌 진위는 아직 직접 확인하지 못했다. 그러니 아래는 <b>보도된 캡처가 사실이라면</b>이라는 조건부 분석이다.</p>
+  <div class="body"><div class="cols">
+    <div class="box"><h3>종목 12개</h3><p>클래시스, 기아, 코웨이, 크래프톤, 현대그린푸드, 영원무역, JYP, 삼성증권, 한국금융지주, 경동나비엔, SK바이오팜, 오리온</p><p class="cap">반도체가 하나도 없다</p></div>
+    <div class="box"><h3>보도된 말</h3><p>"주식은 약 3개월을 보고 가치투자로 샀다." 주가보다 매출·영업이익 고점을 본다. 반도체는 높은 이익률이 지속될지 의문이라 뺐다.</p><p class="cap">약 60억원, 200억원까지 확대 계획 (보도 추정)</p></div>
+    <div class="box tint" style="--c:var(--warn);--cs:var(--warn-s)"><h3>비중은 같지 않다</h3><p>기사 추산으로 JYP는 약 183만원, 전체의 약 0.03%다. 편입 이유는 기사에 따르면 "나무증권으로 입문했는데 광고모델이 엔믹스 설윤이라서". 12개를 똑같이 믿었다고 읽으면 안 된다. 그리고 3개월은 배당 장기보유가 아니다.</p></div>
+  </div>
+  <p class="foot">출처: <a href="https://www.smarttoday.co.kr/ko-kr/articles/112810">스마트투데이 2026-10-16</a> · 볼트 노트 「워뇨띠 12종목 리포트 조사」</p></div>
+</section>
+
+<!-- 14b R3 캡처 -->
+<section class="slide">
+  <div class="eyebrow"><span class="stage" style="--c:var(--kr)">REPLAY 3 원문</span><span class="lv b">입문</span> 퍼진 캡처와 기사</div>
+  <h2>계좌 캡처와 본인 발언, 두 장으로 확인하자</h2>
+  <p class="lead">왼쪽은 Threads에 재게시된 계좌 화면이다. 종목별 평가손익과 수익률이 보인다. 오른쪽은 기사에 실린 본인 발언 인용이다. 둘 다 디시 원글을 옮긴 것이고, 원글 URL은 아직 직접 확보하지 못했다.</p>
+  <div class="body"><div class="cols" style="--n:2">
+    <figure class="shot"><a href="img/threads-12.png" target="_blank" rel="noopener"><img src="img/threads-12.png" alt="Threads 12종목 재게시" loading="lazy"></a><figcaption><b>Threads 재게시</b> @imchamchi72, 2026-10-16 무렵. 첨부 캡처의 게시판 표기는 「워뇨띠」 2026.10.16 09:37. 로그인 안내 창만 걷어냈다. 캡처 2026-10-20</figcaption></figure>
+    <figure class="shot"><a href="img/smarttoday-quote.png" target="_blank" rel="noopener"><img src="img/smarttoday-quote.png" alt="스마트투데이 기사 인용 단락" loading="lazy"></a><figcaption><b>스마트투데이</b> 2026-10-16. "코인은 단타였는데, 주식은 3개월 정도", "반도체 70~80% 영업이익률이 항상 유지될지 의문". 캡처 2026-10-20</figcaption></figure>
+  </div>
+  <div class="note"><b>캡처에서 읽을 수 있는 것</b> 보이는 종목 수익률이 대부분 −0.6%~+8% 범위다. 매입가가 10/16 주가에서 멀지 않았을 가능성이 높다(추정). 금액·비중을 여기서 다시 계산하지는 않는다.</div></div>
+</section>
+
+<!-- 15 R3 실적 vs 주가 -->
+<section class="slide">
+  <div class="eyebrow"><span class="stage" style="--c:var(--kr)">REPLAY 3-2</span><span class="lv e">경험자</span> 말한 기준이 숫자와 맞나</div>
+  <h2>"실적은 신고점, 주가는 아직": 12개 중 몇 개가 맞을까</h2>
+  <p class="lead">네이버증권(FnGuide) 실적으로 직접 셌다. 영업이익이 2Q26 분기 기준(최근 5분기 최대인가)과 최근 4분기 합 기준(2023~2025 연간 최대를 넘나) 둘 다에서 신고점인지 봤다. 버튼으로 묶음을 바꿔 보자.</p>
+  <div class="body">
+    <div class="tabs" id="krTabs">
+      <button data-g="all" aria-pressed="true">전체 12</button>
+      <button data-g="A" aria-pressed="false">A 실적 신고점 · 주가 소외</button>
+      <button data-g="B" aria-pressed="false">B 둘 다 고점</button>
+      <button data-g="C" aria-pressed="false">C 4분기 합만 신고점</button>
+      <button data-g="D" aria-pressed="false">D 매출만 신고점</button>
+    </div>
+    <div class="tw"><table id="tKr"></table></div>
+    <p class="cap" id="krMsg"></p>
+    <p class="foot">기준일: 주가 2026-10-19 종가, 실적은 2Q26까지 확정치·3Q26은 컨센서스. 증권사 매출액은 파생 거래가 섞여 영업이익만 본다. 분기 비교는 5개 분기뿐이고 계절성은 보정하지 않았다.</p>
+  </div>
+</section>
+
+<!-- 16 R3 무릎 -->
+<section class="slide">
+  <div class="eyebrow"><span class="stage" style="--c:var(--kr)">REPLAY 3-3</span><span class="lv e">경험자</span> 사는 자리 · 무릎은 어디였나</div>
+  <h2>시장이 40% 빠진 뒤, 12개 중 8개는 1년 범위의 바닥 20% 안</h2>
+  <p class="lead">캡처가 돈 10/16 종가가 지난 52주 최저~최고 사이 어디였는지 찍었다. 0이면 1년 최저, 100이면 1년 최고. 같은 날 코스피는 6월 고점 대비 −40%, 52주 범위의 35% 지점이었다.</p>
+  <div class="body"><div class="two">
+    <div class="box"><div class="axis"><b></b><span><b>최저</b><b>최고</b></span><b></b></div><div class="rng" id="rng"></div></div>
+    <div style="display:grid;gap:12px">
+      <div class="box tint" style="--c:var(--kr);--cs:var(--kr-s)"><h3>서한과 겹쳐 보면 (내 해석)</h3><p>서한에서 "무릎에 사서 어깨에 판다"는 반도체를 두고 한 말이었다. 같은 잣대를 12종목에 대 보면, 대부분 크게 빠진 자리에 있었다. 본인이 이렇게 설명한 적은 없다.</p></div>
+      <div class="note warn" style="margin-top:0"><b>주의</b> 10/16은 캡처 공개일이지 매수일이 아니다. 실제 매입가·시점은 모른다. 다만 캡처의 수익률이 대부분 −0.6%~+8%라 매입가가 이 근처였을 가능성은 높다(추정).</div>
+    </div>
+  </div></div>
+</section>
+
+<!-- 17 R3 추정 -->
+<section class="slide">
+  <div class="eyebrow"><span class="stage" style="--c:var(--kr)">REPLAY 3-4</span><span class="lv e">경험자</span> 리플레이에서 거꾸로 읽은 빌드오더 (가설)</div>
+  <h2>국장 턴제: 실적이 확인된 소외주를, 실적 시즌 앞에서</h2>
+  <p class="lead">아래는 공개된 말과 숫자를 맞춰 본 <b>나의 추정</b>이다. 워뇨띠가 이렇게 설명한 적은 없다.</p>
+  <div class="body"><div class="cols" style="--n:2">
+    <div class="box tint" style="--c:var(--good);--cs:var(--me-s)"><h3>🟢 사는 조건 4개 (추정)</h3><ol>
+      <li><b>이익이 먼저 신고점</b>: 매출·영업이익 고점을 주가 고점보다 먼저 본다</li>
+      <li><b>주가는 소외</b>: 시장 급락으로 1년 범위 하단 (8/12)</li>
+      <li><b>구조 변화</b>: 증권·코웨이·현대그린푸드·기아처럼 주주환원 얘기가 붙는 종목, 해외 매출 성장주</li>
+      <li><b>이익률 지속성 의심은 뺀다</b>: 반도체 제외. 기사의 "70~80% 영업이익률이 항상 유지될지 의문"과 서한의 2027년 수요 둔화 경계가 같은 말이다</li>
+    </ol></div>
+    <div class="box tint" style="--c:var(--bad);--cs:var(--bad-s)"><h3>🔴 팔 조건 (추정)</h3><ol>
+      <li><b>약 3개월</b>: 본인 말로 "주식은 3개월 정도". 재평가가 오면 판다는 건 추정</li>
+      <li><b>실적 발표가 무효화 지점</b>: 3Q26 발표가 10/30(기아)부터 11월 중순까지 몰려 있다</li>
+      <li><b>첫 시험대는 증권주</b>: 3Q26 예상 영업이익이 2Q26보다 삼성 −26%, 한투 −47%</li>
+      <li><b>크기로 이미 손절 중</b>: JYP 0.03%처럼 확신 없는 건 작게 둔다</li>
+    </ol></div>
+  </div>
+  <div class="note"><b>코인과 같은 점</b> 계좌 대비 크게 싣지 않는다(60억은 게시자가 주장한 코인 수익 3,000억원의 2% 남짓, 둘 다 미검증), 잘 모르는 섹터는 뺀다, 무효화 시점을 미리 둔다. <b>다른 점</b> 차트 대신 실적, 25분 대신 3개월.</div></div>
+</section>
+
+<!-- 18 공통 법칙 -->
+<section class="slide">
+  <div class="eyebrow"><span class="stage">PATCH NOTE</span><span class="lv b">입문</span> 세 리플레이를 겹치면</div>
+  <h2>타점은 게임마다, 세팅값은 하나</h2>
+  <div class="body"><div class="tw"><table>
+    <tr><th></th><th style="color:var(--coin)">코인 래더 (2018~21)</th><th style="color:var(--kr)">국장 턴제 (2026)</th><th style="color:var(--me)">공통 세팅값</th></tr>
+    <tr><td>무엇을 보나</td><td>캔들·거래량·추세</td><td>매출·영업이익 신고점, 주주환원</td><td>서한의 3요소: 가치·추세·주목도</td></tr>
+    <tr><td>어디서 사나</td><td>오는 가격을 지정가로, BTC 위주</td><td>시장 급락 뒤 1년 범위 하단</td><td>쫓아가지 않는다</td></tr>
+    <tr><td>어디서 파나</td><td>패턴 깨지면 빠르게, 7일 넘긴 판은 달러로 손실</td><td>약 3개월, 실적 발표가 무효화 지점</td><td>시간은 손절을 대신하지 않는다</td></tr>
+    <tr><td>얼마나 싣나</td><td>계좌 대비 3.5배 → 0.7배로 하향</td><td>종목별 비중 불균등 (JYP 0.03%)</td><td>커질수록 덜 싣는다</td></tr>
+    <tr><td>번 돈은</td><td>실현손익의 80% 출금</td><td>코인 수익 일부를 다른 게임으로</td><td>한 판에 전부 두지 않는다</td></tr>
+    <tr><td>안 하는 것</td><td>알트 욕심 (본인이 약점이라 함)</td><td>반도체 (이익률 지속성 의문)</td><td>모르는 판은 건너뛴다</td></tr>
+  </table></div></div>
+</section>
+
+<!-- 18a 추세 vs 역추세 -->
+<section class="slide">
+  <div class="eyebrow"><span class="stage" style="--c:var(--letter)">PART 4 · 1</span><span class="lv b">입문</span> 사고팔 때의 문법 · 두 가지 직업</div>
+  <h2>추세매매는 파도를 타고, 역추세매매는 카운터를 친다</h2>
+  <p class="lead">같은 차트를 보고도 들어가는 이유가 정반대인 두 방식이 있다. 어느 쪽이 더 센 게 아니다. 들어가는 자리가 다르니 <b>나오는 자리도 달라야</b> 한다.</p>
+  <div class="body"><div class="duo">
+    <div class="box tint" style="--c:var(--good);--cs:var(--me-s)"><h3>🏄 추세매매 = 대시판 올라타기</h3><p>오르는 걸 사고, 내리는 걸 판다. "이미 움직인 방향이 한동안 이어진다"에 건다.</p>
+      <dl class="kv"><dt>들어갈 때</dt><dd>신고가 돌파, 이동평균 위로 정렬, 눌림 뒤 다시 오를 때</dd><dt>손절 자리</dt><dd>돌파한 자리 아래, 직전 눌림 저점 아래</dd><dt>나올 때</dt><dd>고점 대비 −X% 트레일링, 이동평균 이탈. 목표가를 미리 정하지 않고 추세가 꺾일 때까지</dd><dt>승률·손익비</dt><dd>자주 지고 가끔 크게 번다</dd><dt>망하는 법</dt><dd>꼭대기 추격, 작은 손절이 이어질 때 규칙 바꾸기</dd></dl></div>
+    <div class="box tint" style="--c:var(--bad);--cs:var(--bad-s)"><h3>🥊 역추세매매 = 카운터 패리</h3><p>많이 빠진 걸 사고, 많이 오른 걸 판다. "너무 갔다, 되돌아온다"에 건다.</p>
+      <dl class="kv"><dt>들어갈 때</dt><dd>급락·급등 직후, 과열 지표, 큰 지지·저항 도달</dd><dt>손절 자리</dt><dd>방금 찍은 극단(저점·고점) 바로 너머. 촘촘하다</dd><dt>나올 때</dt><dd>되돌림 목표(평균·중간값)에서 빨리. 길게 들고 가지 않는다</dd><dt>승률·손익비</dt><dd>자주 이기고 가끔 크게 진다</dd><dt>망하는 법</dt><dd>떨어지는 칼날 물타기, 손절 없이 "언젠간 돌아온다"</dd></dl></div>
+  </div>
+  <div class="note"><b>바이 앤 홀드는 둘 다 아니다.</b> 적립은 방향을 맞히는 게임이 아니라 시간을 사는 게임이라 들어가는 이유도 나오는 규칙도 다르다(이 파트 4장).</div></div>
+</section>
+
+<!-- 18b 워뇨띠 추세/역추세 -->
+<section class="slide">
+  <div class="eyebrow"><span class="stage" style="--c:var(--letter)">PART 4 · 2</span><span class="lv e">경험자</span> 워뇨띠는 어느 쪽이었나</div>
+  <h2>역추세를 더 자주 쳤고, 돈은 추세에서 벌었다</h2>
+  <p class="lead">BTC 포지션 2,589개를 진입 직전 가격 방향과 비교했다. 직전 4시간(또는 24시간) 동안 오른 상태에서 롱, 내린 상태에서 숏이면 추세. 반대면 역추세. 기준 시간을 바꿔도 결론은 같았다.</p>
+  <div class="body">
+    <div class="tabs" id="trTabs"><button data-h="4" aria-pressed="true">직전 4시간 기준</button><button data-h="24" aria-pressed="false">직전 24시간 기준</button></div>
+    <div class="two">
+      <div class="box"><div class="tw"><table id="tTrend"></table></div><div class="bars" id="bTrend" style="margin-top:14px"></div></div>
+      <div style="display:grid;gap:12px">
+        <div class="box tint" style="--c:var(--letter);--cs:var(--letter-s)"><h3>읽는 법</h3><ul><li>승률은 둘 다 약 75%. 승률로는 차이가 안 보인다</li><li>역추세는 횟수가 더 많고, 최대 수익 31판에도 많지만 <b>최대 손실 31판에는 더 많다</b></li><li>순이익은 추세 쪽이 약 4~5배</li></ul></div>
+        <div class="note warn" style="margin-top:0"><b>한계</b> 가격은 바이낸스 BTCUSDT 1시간봉으로 대신했다(BitMEX와 소폭 차이). 분할 진입은 평균 진입가 기준이다. 유튜브 해설의 "역추세 1,319 vs 추세 1,067, 승률 둘 다 약 75%"와 방향이 같다.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 18c 워뇨띠 탈출 -->
+<section class="slide">
+  <div class="eyebrow"><span class="stage" style="--c:var(--letter)">PART 4 · 3</span><span class="lv e">경험자</span> 워뇨띠는 어디서 나왔나</div>
+  <h2>틀리면 0.2%에서 나오고, 맞으면 고점에서 몇 % 내줄 때 나왔다</h2>
+  <p class="lead">포지션마다 보유 기간의 시간봉 고가·저가를 겹쳐서, 가장 유리했던 지점(고점)과 실제 청산가를 비교했다. 손절과 익절의 모양이 완전히 달랐다.</p>
+  <div class="body"><div class="cols">
+    <div class="box tint" style="--c:var(--bad);--cs:var(--bad-s)"><h3>🔴 진 판 628개</h3><div class="big" style="--c:var(--bad)" id="xLossMove"></div><p class="cap">가격 기준 손실 중앙값. 10%는 이보다 크게(<span id="xLossP10"></span>) 졌다</p><p style="margin-top:8px">절반(<b id="xLoss1h"></b>)이 1시간 안에 정리됐다. 손절이 짧고 촘촘했다.</p></div>
+    <div class="box tint" style="--c:var(--good);--cs:var(--me-s)"><h3>🟢 4시간 넘게 들고 간 이긴 판</h3><div class="big" style="--c:var(--good)" id="xWinGive"></div><p class="cap">고점 대비 내주고 나온 폭(중앙값). 보유 중 고점은 중앙값 <b id="xWinMfe"></b></p><p style="margin-top:8px">고점에서 딱 팔지 않았다. 조금 내주는 걸 받아들이고 추세가 꺾인 걸 확인한 뒤 나왔다.</p></div>
+    <div class="box tint" style="--c:var(--coin);--cs:var(--coin-s)"><h3>🏆 크게 번 31판</h3><div class="big" style="--c:var(--coin)" id="xTopGive"></div><p class="cap">고점 대비 반납 중앙값. 75%가 <b id="xTopP75"></b> 이내, 보유 중앙값 약 4.3일</p><p style="margin-top:8px">큰 판일수록 더 많이 내주면서 더 오래 탔다. <b>고점 대비 −10% 언저리 트레일링</b>과 닮은 모양이다.</p></div>
+  </div>
+  <div class="note warn"><b>그대로 베끼면 안 되는 이유</b> 그는 분할로 나눠 팔아서 청산가는 평균값이다. 4시간 넘게 버틴 진 판은 중간에 중앙값 −3.4%까지 밀렸다가 정리됐다. 큰 손실 꼬리가 여기서 나왔다(7일 초과는 달러 환산 합계 음수). 우리에게 맞는 번역은 "손절은 진입 전에 숫자로, 익절은 트레일링으로"다.</div></div>
+</section>
+
+<!-- 18d 적립 vs 매매 -->
+<section class="slide">
+  <div class="eyebrow"><span class="stage" style="--c:var(--me)">PART 4 · 4</span><span class="lv b">입문</span> 탈출 전략이 필요한 돈, 필요 없는 돈</div>
+  <h2>적립은 탈출 대신 규칙, 매매는 탈출이 먼저다</h2>
+  <p class="lead">Just keep buying. 지수 ETF와 배당 ETF를 정해진 날 계속 사는 돈에는 "고점 대비 −10%면 판다" 같은 탈출이 없다. 하락이 곧 싸게 사는 날이다. 그 밖의 모든 매매에는 <b>들어가는 전략과 똑같은 무게로 나오는 전략</b>이 있어야 한다.</p>
+  <div class="body"><div class="duo">
+    <div class="box tint" style="--c:var(--me);--cs:var(--me-s)"><h3>🐄 적립 계좌 (ETF·배당)</h3><dl class="kv"><dt>들어갈 때</dt><dd>매달 같은 날, 같은 금액. 가격 안 봄</dd><dt>탈출 전략</dt><dd>없음. 대신 <b>리밸런싱 날짜</b>와 <b>인출 규칙</b>(은퇴 후 월 얼마)</dd><dt>팔 때</dt><dd>목적 달성(인출), 비중 이탈 조정, 상품 자체가 망가질 때(배당 삭감 반복, 전략 변경)</dd><dt>하지 말 것</dt><dd>−15% 빠졌다고 단타로 빼고 다시 사기</dd></dl></div>
+    <div class="box tint" style="--c:var(--bad);--cs:var(--bad-s)"><h3>⚔️ 매매 계좌 (코인·개별주·스윙)</h3><dl class="kv"><dt>들어갈 때</dt><dd>추세든 역추세든 실적이든 근거 한 줄</dd><dt>탈출 전략</dt><dd><b>주문 전에</b> 숫자로: 손절 1개 + 익절 1개 + 시간 1개</dd><dt>팔 때</dt><dd>미리 적은 숫자에 닿으면 그냥 판다. 그 순간엔 새 이유를 만들지 않는다</dd><dt>하지 말 것</dt><dd>손실 난 매매를 "장기투자"로 바꿔 부르기</dd></dl></div>
+  </div>
+  <div class="note"><b>워뇨띠도 계좌마다 달랐다.</b> 코인 선물은 짧고 촘촘하게, 국장은 "3개월 정도". 번 돈의 80%는 판 밖으로 뺐다. 매매 계좌에서 번 돈이 적립 계좌로 넘어가는 구조다.</div></div>
+</section>
+
+<!-- 18e 탈출 메뉴판 -->
+<section class="slide">
+  <div class="eyebrow"><span class="stage" style="--c:var(--me)">PART 4 · 5</span><span class="lv b">입문</span><span class="lv e">경험자</span> 탈출 전략 메뉴판</div>
+  <h2>나오는 방법은 여러 개다. 내 스타일에 맞는 걸 고른다</h2>
+  <p class="lead">정답 하나가 있는 게 아니다. 추세매매에 촘촘한 고정 손절을 붙이면 큰 판을 다 놓치고, 역추세매매에 넉넉한 트레일링을 붙이면 되돌림 이익을 다 토해낸다. 보통 <b>손절 1개 + 익절 1개 + 시간 1개</b>를 고른다.</p>
+  <div class="body"><div class="menu" id="exitMenu"></div>
+  <p class="foot">"워뇨띠 흔적"은 이 강의의 원장 재계산과 공개 발언에서 보이는 모양이다. 본인이 이 이름으로 규칙을 밝힌 적은 없다.</p></div>
+</section>
+
+<!-- 18f 트레일링 시뮬 -->
+<section class="slide">
+  <div class="eyebrow"><span class="stage" style="--c:var(--me)">PART 4 · 6</span><span class="lv e">경험자</span> 직접 해보기 · 고점 대비 −X% 트레일링</div>
+  <h2>−10%로 나올까, −30%로 버틸까: 같은 비트코인, 다른 결과</h2>
+  <p class="lead">BTC를 한 번 사서, 종가가 그때까지의 최고 종가보다 X% 빠지면 판다. 한 번 나오면 다시 안 들어간다고 가정했다. 산 날짜 두 개를 골라 슬라이더를 움직여 보자.</p>
+  <div class="body"><div class="two">
+    <div class="box">
+      <div class="tabs" id="trailTabs"><button data-k="good" aria-pressed="true">상승장 초입에 샀다</button><button data-k="bad" aria-pressed="false">고점 근처에 샀다</button></div>
+      <div class="ctl"><label>고점 대비 <output id="trailOut"></output> 빠지면 판다<input type="range" id="trailX" min="5" max="30" step="5" value="10"></label></div>
+      <div class="result" id="trailRet" style="margin-top:10px"></div>
+      <p class="cap" id="trailMsg"></p>
+      <div class="tw" style="margin-top:10px"><table id="tTrailOther"></table></div>
+    </div>
+    <div style="display:grid;gap:12px">
+      <div class="box tint" style="--c:var(--me);--cs:var(--me-s)"><h3>보이는 것</h3><ul><li>상승장 초입: 촘촘할수록 일찍 털렸다. −5%, −10%는 두 달 만에 내렸고, 안 판 쪽이 가장 많이 벌었다</li><li>고점 근처: 촘촘할수록 덜 잃었다. 안 판 쪽은 중간에 −52.7%까지 내려갔다</li><li>어느 숫자가 정답인지는 <b>사기 전엔 모른다</b>. 그래서 내가 견딜 수 있는 폭을 고르는 것이다</li></ul></div>
+      <div class="note" style="margin-top:0"><b>워뇨띠 큰 판의 반납폭</b> 중앙값 7.7%, 75%가 10.3% 이내였다(PART 4·3). 하루 10시간 보던 사람의 숫자라 직장인은 더 넓게 잡는 게 보통이다.</div>
+    </div>
+  </div>
+  <p class="foot">데이터: 바이낸스 BTCUSDT 일봉 종가, 2021-12-31까지. 수수료·세금·슬리피지 제외. 과거 한 구간의 예시이며 다른 구간에서는 결과가 달라진다.</p></div>
+</section>
+
+<!-- 18g 매매법 고르기 -->
+<section class="slide">
+  <div class="eyebrow"><span class="stage" style="--c:var(--me)">PART 4 · 7</span><span class="lv b">입문</span> 당신의 매매법은?</div>
+  <h2>들어가는 법과 나오는 법을 한 세트로 고르자</h2>
+  <p class="lead">다섯 문항이다. 정답은 없다. 고르면 진입 규칙과 탈출 규칙이 짝으로 나온다. 이 세트를 뒤 실습 장의 규칙 카드에 옮겨 적으면 된다.</p>
+  <div class="body"><div class="two">
+    <div class="quizbox" id="styleQuiz" style="display:grid;gap:10px"></div>
+    <div class="out" id="styleOut"></div>
+  </div></div>
+</section>
+
+<!-- 18h 강사 카드 -->
+<section class="slide">
+  <div class="eyebrow"><span class="stage" style="--c:var(--me)">PART 4 · 8</span><span class="lv b">입문</span> 그럼 강사인 나는?</div>
+  <h2>내 매매법: 메인은 적립 농부, 부캐는 4시간봉 추세 스윙</h2>
+  <p class="lead">워뇨띠를 다 뜯어보고 나서 내가 고른 세트다. 고배율 단타로 −97%를 겪은 뒤라, 역추세 카운터는 내 직업이 아니라고 결론 냈다.</p>
+  <div class="body"><div class="cols">
+    <div class="box tint" style="--c:var(--me);--cs:var(--me-s)"><h3>🐄 메인 · 배당 적립</h3><dl class="kv"><dt>사는 법</dt><dd>배당성장 ETF 중심, 정해진 날 적립</dd><dt>탈출</dt><dd>없음. 분기 리밸런싱, 은퇴 후 인출 규칙</dd><dt>안 하는 것</dt><dd>하락에 팔고 다시 사기</dd></dl></div>
+    <div class="box tint" style="--c:var(--coin);--cs:var(--coin-s)"><h3>🏄 부캐 · BTC 4H 추세 스윙</h3><dl class="kv"><dt>사는 법</dt><dd>4시간봉 마감 확인, 눌림 리테스트 지정가. BTC → ETH만</dd><dt>손절</dt><dd>진입 전에 숫자로, 계좌 1% 이하. 스톱마켓</dd><dt>익절</dt><dd>손익비 2 이상 목표, 나머지는 트레일링</dd><dt>시간</dt><dd>4H 봉 6개 안에 구조 확인 없으면 정리(실험 중)</dd></dl></div>
+    <div class="box tint" style="--c:var(--kr);--cs:var(--kr-s)"><h3>🔍 실험 슬리브 · 개별주</h3><dl class="kv"><dt>사는 법</dt><dd>실적 신고점 + 주가 소외, 한 종목 1~1.5%</dd><dt>탈출</dt><dd>다음 실적 발표가 무효화 지점. 슬리브 상한 5%</dd><dt>안 하는 것</dt><dd>배당 본진 돈으로 사기</dd></dl></div>
+  </div>
+  <div class="note"><b>워뇨띠에서 가져온 것</b> 계좌마다 다른 게임, 손절은 짧게, 맞는 판만 길게, 번 돈은 판 밖으로. <b>안 가져온 것</b> 역추세 카운터, 25분 단타, 하드스탑 없는 운용. 이 세트는 30회 기록으로 검증 중이고 아직 확정이 아니다.</div></div>
+</section>
+
+<!-- 19 케이스 -->
+<section class="slide">
+  <div class="eyebrow"><span class="stage" style="--c:var(--me)">MY ACCOUNT</span><span class="lv b">입문</span><span class="lv e">경험자</span> 내 계좌로 옮기면 · 케이스 11개</div>
+  <h2>이 장면에서 워뇨띠 세팅이면 어떻게 하나</h2>
+  <p class="lead">내 실제 기록 4개와 앞으로 만날 장면 7개다. 버튼을 눌러 상황을 고르자. 왼쪽부터 코인, 국장, 배당 순서다.</p>
+  <div class="body">
+    <div class="tabs" id="caseTabs"></div>
+    <div class="out" id="caseOut"></div>
+  </div>
+</section>
+
+<!-- 20 실습 -->
+<section class="slide">
+  <div class="eyebrow"><span class="stage" style="--c:var(--me)">PRACTICE</span><span class="lv b">입문</span> 5분 실습 · 살 때·팔 때 카드 만들기</div>
+  <h2>주문 버튼 누르기 전에, 빈칸부터 채워 보자</h2>
+  <p class="lead">게임을 고르면 그 게임의 게이트가 나온다. 하나라도 비면 그날은 NO다. 아래 빈칸을 채우면 내 규칙 카드 문장이 만들어진다. 실제 금액은 쓰지 않아도 된다.</p>
+  <div class="body"><div class="two">
+    <div>
+      <div class="tabs" id="gateTabs">
+        <button data-m="coin" aria-pressed="true">코인 진입 게이트</button>
+        <button data-m="kr" aria-pressed="false">국장 매수 게이트</button>
+      </div>
+      <div class="check" id="gate"></div>
+      <div class="out" id="gateOut" style="margin-top:10px;min-height:0"></div>
+    </div>
+    <div class="box">
+      <h3>내 규칙 카드</h3>
+      <div class="fill">
+        <label>이 계좌의 게임<select id="fGame"><option>코인 추세 스윙</option><option>코인 역추세</option><option>국장 실적주 3개월</option><option>배당 적립</option></select></label>
+        <label>사는 조건 한 줄<input id="fBuy" placeholder="예: 4H 마감 후 리테스트 지정가"></label>
+        <label>가격 손절<input id="fStop" placeholder="예: 직전 저점 이탈, 계좌 1% 손실"></label>
+        <label>시간 손절<input id="fTime" placeholder="예: 4H 봉 6개 안에 구조 확인 없으면 종료"></label>
+        <label>번 돈은 어디로<input id="fOut" placeholder="예: 월말 실현수익 30% 업비트로"></label>
+      </div>
+      <div class="rulecard" id="rulecard"></div>
+    </div>
+  </div></div>
+</section>
+
+<!-- 21 근거표 -->
+<section class="slide">
+  <div class="eyebrow"><span class="stage">EVIDENCE</span><span class="lv e">경험자</span> 오늘 한 말을 다시 의심하기</div>
+  <h2>근거표: 어디까지 믿어도 되나</h2>
+  <p class="lead">추천마다 근거, 맞는 사람, 그만둘 조건을 붙였다. 판정은 버팀(어느 기간·자료로 봐도 같음) / 약함(일부에서 바뀜 또는 재검증 못 함) / 무너짐.</p>
+  <div class="body"><div class="tw"><table id="tEvid"></table></div>
+  <p class="cap">구간 재계산 한계: 코인 원장은 2018~2021 한 계좌뿐이라 다른 시장 국면으로 돌려 볼 데이터가 없다. 국장은 공개 시점 하루의 단면이다. 그래서 대부분이 약함이다.</p></div>
+</section>
+
+<!-- 22 정리 + 할 일 -->
+<section class="slide">
+  <div class="eyebrow"><span class="stage">GG</span><span class="lv b">입문</span> 정리와 이번 주 할 일</div>
+  <h2>전설에게서 훔칠 건 손가락이 아니라 세팅값이다</h2>
+  <div class="body"><div class="two">
+    <ol class="rules" style="grid-template-columns:1fr">
+      <li><b>게임을 먼저 정한다.</b> 코인은 차트, 국장은 실적, 배당은 적립. 섞지 않는다</li>
+      <li><b>쫓아가서 사지 않는다.</b> 오는 가격(지정가)이나 시장이 빠진 자리(무릎)</li>
+      <li><b>계좌 대비로 잰다.</b> 화면 배율 말고 전체 명목가치 ÷ 계좌</li>
+      <li><b>시간 손절을 둔다.</b> 코인은 봉 개수, 국장은 실적 발표일</li>
+      <li><b>번 돈은 판 밖으로.</b> 창고에 넣은 골드는 전멸해도 남는다</li>
+      <li><b>모르는 판은 건너뛴다.</b> 그도 알트와 반도체를 건너뛰었다</li>
+    </ol>
+    <div style="display:grid;gap:12px">
+      <div class="box tint" style="--c:var(--me);--cs:var(--me-s)"><h3>📅 이번 주 하나만</h3><ul>
+        <li><b>10/22(목)</b> 90일 서한 1차 검증일. 그의 판단 5칸을 내 일지 양식에 옮겨 적고, 내 판단도 같이 적기</li>
+        <li><b>10/30(금)</b> 기아 3Q26 발표. 사지 말고 "실적이 무효화 지점이 되는지"만 관찰</li>
+        <li>코인 계좌에 <b>계좌 대비 익스포저</b> 계산 칸 하나 추가</li>
+      </ul></div>
+      <div class="note" style="margin-top:0">"나는 ___ 게임에서 ___ 조건에 사고, ___면 판다. ___까지 아무 일 없으면 정리한다. 번 돈의 ___는 밖으로 뺀다."</div>
+    </div>
+  </div>
+  <p class="foot">자료: 2018~2021 BitMEX 공개 체결 원장(공개자 디시 차트 마이너 갤러리 「워뇨띠」 고정닉, 2026-09-22) 재집계, 90일 서한, 2026-10-16 보도·재게시 캡처, 네이버증권 실적·주가(2026-10-19). 원장 재구성 수치는 근사치다. 국장 12종목 보유 진위는 미확인이며 매수 추천이 아니다. 과거 성과는 미래를 보장하지 않고, 선물·레버리지는 원금 전액 손실 위험이 있다.</p></div>
+</section>
+
+<!-- 23 꼬리 -->
+<section class="slide cover">
+  <div class="eyebrow"><span class="stage">REPLAY END</span></div>
+  <h1>처음 질문으로 돌아가자.<br><b style="color:var(--me)">그의 무엇을 가져올 수 있지?</b></h1>
+  <p class="lead">종목은 못 가져온다. 그는 3개월 보고 샀고 비중도 모른다. 빈도도 못 가져온다. 그는 하루 10시간 화면 앞에 있었다. 가져올 수 있는 건 하나다. <b>살아서 다음 판에 접속하게 만드는 세팅값.</b> 그건 내 계좌에서도 똑같이 작동한다.</p>
+  <div class="press">GG · NEXT GAME?</div>
+  <p class="foot">질문은 언제든. 투자 권유가 아니며 모든 매매에 원금 손실 위험이 있다.</p>
+</section>
+
+<!-- 27 자료실 -->
+<section class="slide">
+  <div class="eyebrow"><span class="stage">APPENDIX</span> 자료실 · 원본과 근거</div>
+  <h2>직접 확인하고 싶은 사람을 위한 자료실</h2>
+  <p class="lead">원본 파일, 본인 게시글, 재게시, 기사, 내가 다시 계산한 노트를 한곳에 모았다. 링크 확인일과 스크린샷 캡처일은 2026-10-20이다. 게시글과 파일은 언제든 지워지거나 막힐 수 있다.</p>
+  <div class="body"><div class="two">
+    <div class="box">
+      <h3>🗂️ 원본 파일 (구글 드라이브)</h3>
+      <ul class="src">
+        <li><b>본인 공식 링크</b><span><a href="https://drive.google.com/file/d/1XDwxbriz_kOq44iH-mHcjsYTBklMnMW3/view?usp=sharing" target="_blank" rel="noopener">aoa_public_2021-12-31_with_letter.zip</a> · 디시 공개글에 첨부된 주소</span></li>
+        <li><b>분석에 쓴 미러</b><span><a href="https://drive.google.com/file/d/1u3x96-Hl56oi2X2-PjhnsNmIWlbiXCrM/view?usp=sharing" target="_blank" rel="noopener">비공식 미러</a> · 9/23 원본이 다운로드 제한에 걸려 이것으로 분석. 원본과 바이트 동일성은 미확인</span></li>
+        <li><b>미러 SHA-256</b><span class="mono">aa0668a88f72d396bdc86d027de7cc4def695ad70731459ea10a231722de9884</span></li>
+        <li><b>ZIP 구성</b><span>체결 CSV 4개(1,444,583행) + 지갑 CSV 1개 + 90일 서한. 압축 해제 601,794,512 bytes</span></li>
+      </ul>
+      <figure class="shot" style="margin-top:10px"><a href="img/drive-original.png" target="_blank" rel="noopener"><img src="img/drive-original.png" alt="구글 드라이브 원본 파일 화면" loading="lazy"></a><figcaption><b>드라이브 원본 화면</b> 파일명 확인용. 캡처 2026-10-20</figcaption></figure>
+    </div>
+    <div class="box">
+      <h3>📌 원문·보도</h3>
+      <ul class="src">
+        <li><b>예고 (본인)</b><span><a href="https://gall.dcinside.com/mgallery/board/view/?id=chartanalysis&amp;no=5050579" target="_blank" rel="noopener">디시 차트 마이너 갤러리 · 2026-09-22 11:28</a></span></li>
+        <li><b>공개 (본인)</b><span><a href="https://gall.dcinside.com/mgallery/board/view/?id=chartanalysis&amp;no=5051684" target="_blank" rel="noopener">디시 차트 마이너 갤러리 · 2026-09-22 17:46</a></span></li>
+        <li><b>90일 서한</b><span>원문은 ZIP 안 서한 파일. 재게시: <a href="https://gall.dcinside.com/mgallery/board/view/?id=m2liquidity&amp;no=84150" target="_blank" rel="noopener">디시 유동성 갤러리</a> · <a href="https://tg.me/yunlog_official/17232" target="_blank" rel="noopener">텔레그램 미러</a></span></li>
+        <li><b>원장 보도</b><span><a href="https://economybloc.com/article/116705/" target="_blank" rel="noopener">이코노미블록</a></span></li>
+        <li><b>국장 보도</b><span><a href="https://www.smarttoday.co.kr/ko-kr/articles/112810" target="_blank" rel="noopener">스마트투데이 2026-10-16</a></span></li>
+        <li><b>국장 재게시</b><span><a href="https://www.threads.com/@imchamchi72/post/DejQ0efGIow" target="_blank" rel="noopener">Threads @imchamchi72</a> · <a href="https://www.threads.com/@moogommoo/post/DejAlysmgz-" target="_blank" rel="noopener">Threads @moogommoo</a> · 디시 원글은 미확보</span></li>
+        <li><b>해설 영상</b><span><a href="https://www.youtube.com/watch?v=hNvnfNKLs3w" target="_blank" rel="noopener">「워뇨띠 매매내역 한방정리」</a> · 7장 검산에 사용. 볼트 요약 노트 「261020 워뇨띠 매매내역 한방정리」</span></li>
+        <li><b>인터뷰</b><span><a href="https://blog.bitmex.com/?lang=" target="_blank" rel="noopener">BitMEX 블로그 AOA 인터뷰</a> (알트 타율 발언)</span></li>
+        <li><b>BTC 가격</b><span>바이낸스 BTCUSDT 1시간봉 2018-02~2021-12 (PART 4 추세 분류·탈출 계산·트레일링 시뮬)</span></li>
+        <li><b>주가·실적</b><span>네이버증권(FnGuide) 분기·연간 실적, 수정주가 일봉·월봉, 2026-10-19 수집 · 발표일 <a href="https://factstock.net/earnings" target="_blank" rel="noopener">factstock</a></span></li>
+        <li><b>내 분석 노트</b><span>볼트 「워뇨띠 공개 거래내역 분석」 00~07장 · BTC 포지션 재구성 파일 <span class="mono">derived_xbtusd_episodes.csv</span> · 「워뇨띠 12종목 리포트 조사」 · 원문 스크린샷 <span class="mono">img/</span></span></li>
+      </ul>
+    </div>
+  </div>
+  <p class="foot">원장 수치는 내가 공개 파일을 주문·포지션 단위로 다시 묶은 근사치다. 국장 12종목은 제3자 재게시와 보도를 근거로 하며 보유 진위는 확인하지 않았다. 스크린샷은 출처 확인용 인용이며 광고·로그인 창만 잘라냈다. 투자 권유가 아니다.</p></div>
+</section>
+
+</main>
+
+<nav class="nav" aria-label="슬라이드 이동">
+  <button id="prev" aria-label="이전">←</button>
+  <div class="prog"><div id="prog"></div></div>
+  <span class="cnt" id="cnt"></span>
+  <button id="talkToggle" class="talk-button" aria-expanded="false" aria-controls="speakerCard">발표 멘트</button>
+  <button id="next" aria-label="다음">→</button>
+</nav>
+<aside id="speakerCard" hidden aria-label="이 장의 발표 멘트"><strong>이 장은 이렇게 설명하기</strong><p id="speakerText"></p></aside>
+
+<script>
+// 숫자는 여기 한 곳에만 둔다. 출처: 볼트 「워뇨띠 공개 거래내역 분석」 03·04장, 「워뇨띠 12종목 리포트 조사」, 네이버증권 2026-10-19 수집
+const DATA={
+  headline:{limit:'97.2%',maker:'73.2%',btc:'78.6%',win:'75.7%'},
+  longShort:[['롱',1279,77.0,775.95],['숏',1310,74.5,1209.67],['합계',2589,75.7,1985.62]],
+  years:[
+    {y:2018,n:1755,hold:11.8,exp:3.51,orders:2},
+    {y:2019,n:433,hold:202.4,exp:1.01,orders:5},
+    {y:2020,n:277,hold:371.2,exp:0.93,orders:7},
+    {y:2021,n:124,hold:928.8,exp:0.73,orders:10.5}
+  ],
+  expBuckets:[['0.5배 이하',523,79.0,251.41],['0.5~1배',289,77.5,498.70],['1~3배',759,78.9,1308.70],['3~5배',342,75.7,62.74],['5배 초과',676,68.9,-135.93]],
+  holdBuckets:[['1~4시간',337,78.9,6.53],['4~24시간',433,69.7,12.34],['1~3일',154,65.6,10.01],['3~7일',66,53.0,5.31],['7일 초과',38,63.2,-4.04]],
+  withdraw:[[2018,100.94],[2019,259.18],[2020,622.15],[2021,1850.26]],
+  trend:{"4": [["역추세", 1619, 75.6, 399.4, 19, 24], ["추세", 970, 76.0, 1586.2, 12, 7]], "24": [["역추세", 1475, 74.8, 300.0, 17, 19], ["추세", 1114, 76.9, 1685.6, 14, 12]]},
+  exitStat:{"lossMove": -0.2, "lossP10": -1.9, "loss1h": 52.2, "winMfe": 3.4, "winGive": 2.2, "topGive": 7.7, "topP75": 10.3},
+  trailSim:{"good": {"label": "상승장 초입에 샀다 (2020-10-01)", "entry": 10619, "peak": 67526, "peakDate": "21.11.08", "maxRet": 535.9, "trail": [{"rule": "고점 대비 −5%", "x": 5, "date": "20.11.26", "ret": 61.5, "days": 56}, {"rule": "고점 대비 −10%", "x": 10, "date": "20.11.26", "ret": 61.5, "days": 56}, {"rule": "고점 대비 −15%", "x": 15, "date": "21.01.12", "ret": 220.7, "days": 103}, {"rule": "고점 대비 −20%", "x": 20, "date": "21.01.21", "ret": 190.5, "days": 112}, {"rule": "고점 대비 −25%", "x": 25, "date": "21.01.27", "ret": 186.0, "days": 118}, {"rule": "고점 대비 −30%", "x": 30, "date": "21.05.17", "ret": 310.0, "days": 228}], "other": [{"rule": "매수가 대비 −10% 고정 손절", "date": "21.12.31", "ret": 335.2, "days": 456}, {"rule": "종가 20일선 이탈", "date": "20.10.02", "ret": -0.5, "days": 1}, {"rule": "안 판다 (21년 말까지)", "date": "21.12.31", "ret": 335.2, "days": 456}]}, "bad": {"label": "고점 근처에 샀다 (2021-04-14)", "entry": 62960, "peak": 67526, "peakDate": "21.11.08", "maxRet": 7.3, "trail": [{"rule": "고점 대비 −5%", "x": 5, "date": "21.04.18", "ret": -10.8, "days": 4}, {"rule": "고점 대비 −10%", "x": 10, "date": "21.04.18", "ret": -10.8, "days": 4}, {"rule": "고점 대비 −15%", "x": 15, "date": "21.04.22", "ret": -17.9, "days": 8}, {"rule": "고점 대비 −20%", "x": 20, "date": "21.04.24", "ret": -20.5, "days": 10}, {"rule": "고점 대비 −25%", "x": 25, "date": "21.05.15", "ret": -25.7, "days": 31}, {"rule": "고점 대비 −30%", "x": 30, "date": "21.05.17", "ret": -30.8, "days": 33}], "other": [{"rule": "매수가 대비 −10% 고정 손절", "date": "21.04.18", "ret": -10.8, "days": 4}, {"rule": "종가 20일선 이탈", "date": "21.04.18", "ret": -10.8, "days": 4}, {"rule": "안 판다 (21년 말까지)", "date": "21.12.31", "ret": -26.6, "days": 261}]}},
+  exits:[["고정 손절", "매수가 대비 −X%나 차트 자리(직전 저점) 아래에 미리 걸어 둔다", "모든 매매의 기본, 특히 역추세", "촘촘하면 노이즈에 털린다", "진 판 절반이 1시간 안, 중앙값 −0.2%", "--bad"], ["트레일링 스톱", "고점 대비 −X% 빠지면 판다. 오를수록 손절선도 따라 올라간다", "추세매매", "상승 초입에 촘촘하면 일찍 털린다", "큰 31판이 고점 대비 중앙값 7.7% 내주고 나옴", "--good"], ["이동평균 이탈", "종가가 20일선(또는 4H 20EMA) 아래로 마감하면 판다", "추세매매, 스윙", "횡보장에서 여러 번 들락날락", "공개 발언의 \"패턴 깨지면 손절\"과 비슷한 결", "--good"], ["시간 손절", "정한 시간 안에 예상대로 안 움직이면 판다", "직장인 스윙, 역추세", "움직이기 직전에 내릴 수 있다", "7일 넘긴 판은 합계 손실", "--warn"], ["목표가·분할 익절", "손익비 2R에서 절반, 나머지는 트레일링", "역추세(목표가), 스윙(분할)", "큰 추세를 일부만 먹는다", "큰 물량을 여러 번 나눠 청산", "--coin"], ["가설 무효화", "산 이유가 깨지면 판다. 실적 꺾임, 주주환원 축소, 구조 변화", "가치·실적 투자", "판단이 느리면 늦게 나온다", "국장: 실적 발표가 무효화 지점(추정)", "--kr"], ["이벤트 전 정리", "실적 발표, FOMC, 주말 전에 줄이거나 닫는다", "단기 매매", "좋은 뉴스도 놓친다", "서한의 \"판단을 깨는 변수\" 칸", "--letter"], ["변동성 스탑", "최근 변동폭(ATR)의 2~3배 밖에 손절. 시장이 거칠면 넓게", "추세매매, 코인", "계산이 번거롭다", "원장에서 직접 확인은 안 됨", "--sub"]],
+  styleQ:[{"q": "장중에 차트를 볼 수 있나?", "a": [["거의 못 본다", {"farm": 2, "trend": 1, "earn": 1}], ["하루 한두 번 4시간봉 정도", {"trend": 2, "earn": 1}], ["몇 시간씩 본다", {"counter": 2, "trend": 1}]]}, {"q": "어떤 매매가 덜 괴롭나?", "a": [["작게 자주 지고 가끔 크게 버는 것", {"trend": 2}], ["자주 이기다 가끔 크게 지는 것", {"counter": 2}], ["오래 기다리는 것", {"farm": 1, "earn": 2}]]}, {"q": "수익이 났는데 다시 빠진다. 고점 대비 몇 %까지 참나?", "a": [["5% 정도", {"counter": 2}], ["10~15%", {"trend": 2, "earn": 1}], ["안 판다, 더 산다", {"farm": 3}]]}, {"q": "무엇을 보고 사고 싶나?", "a": [["차트 추세와 돌파", {"trend": 2}], ["급락·과열 뒤 되돌림", {"counter": 2}], ["실적·배당 같은 회사 숫자", {"earn": 2, "farm": 1}]]}, {"q": "비상금(생활비 3~6개월)은?", "a": [["아직 없다", {"lock": 1}], ["채우는 중", {"farm": 1}], ["다 찼다", {}]]}],
+  styleR:{"farm": {"n": "🐄 적립 농부", "c": "--me", "e": "정해진 날 지수·배당 ETF 적립. 가격 안 봄", "x": "탈출 없음 → 분기 리밸런싱 + 인출 규칙", "w": "번 돈을 판 밖으로 옮기는 창고 역할", "d": "하락에 팔고 다시 사기"}, "trend": {"n": "🏄 추세 서퍼", "c": "--good", "e": "4시간봉·일봉 마감 확인 뒤 돌파·눌림 리테스트 지정가", "x": "손절: 직전 눌림 저점 아래 + 익절: 고점 대비 −10~15% 트레일링 + 시간: 봉 6개", "w": "맞는 판만 길게(큰 판 보유 중앙값 4.3일), 원장에서 순이익이 더 컸던 쪽", "d": "꼭대기 추격, 작은 손절 이어질 때 규칙 바꾸기"}, "counter": {"n": "🥊 역추세 카운터", "c": "--bad", "e": "급락·과열 극단에서 반전 캔들 확인 뒤 작게", "x": "손절: 방금 극단 바로 너머 + 익절: 평균 회귀 목표에서 분할 + 시간: 몇 시간 안", "w": "워뇨띠가 가장 자주 친 방식. 단 큰 손실 31판 중 24판이 여기서", "d": "물타기, 손절 없이 \"돌아온다\", 고배율"}, "earn": {"n": "🔍 실적 사냥꾼", "c": "--kr", "e": "영업이익 신고점 + 주가 소외, 실험 슬리브 안에서 한 종목 1~1.5%", "x": "가설 무효화(다음 실적 발표) + 시간 약 3개월 + 슬리브 상한", "w": "국장 12종목에서 거꾸로 읽은 필터(추정)", "d": "배당 본진 돈으로 사기, 실적 꺾였는데 버티기"}},
+  pareto:[['상위 1% (26개)',26,2000.62,'순이익의 101%'],['나머지 99% (2,563개)',2563,-15.00,'합계 거의 0'],['전체 (2,589개)',2589,1985.62,'승률 75.7%']],
+  holdSplit:[['전체 중앙값',0.43],['상위 31판 중앙값',102.8]],
+  verify:[
+    ['포지션 승률','75.6% (2,406승 776패, 전 종목)','75.7% (BTC 2,589개)','일치'],
+    ['상위 1%의 몫','31개가 수익의 91%','26개가 순이익의 101%','방향 일치'],
+    ['큰 수익 보유시간','평균 13시간 이상~며칠','상위 31판 중앙값 약 4.3일','방향 일치'],
+    ['지정가 체결','거래대금 73% 이상 메이커','BTC 체결 수량 73.2% 메이커','일치'],
+    ['잔고 1/3 넘는 단일 손실','16회, 2018년만','19회 (2018년 18, 2019년 1)','근사'],
+    ['초기 입금','5 BTC','첫 입금 0.17 BTC, 누적 14.49 BTC(18회)','불일치'],
+    ['누적 출금','2,815 BTC','2,832.53 BTC','근사'],
+    ['5·19 폭락 대응','숏 익절 직후 롱 전환으로 방어','숏 +24.7 뒤 롱 −172.4 BTC','반대']
+  ],
+  wallet:[['누적 입금',14.49],['누적 실현손익',3537.32],['누적 출금',-2832.53],['최종 잔고',737.27]],
+  // opQ: 2Q26 영업이익의 최근 5분기 최대 대비(0=신고점), opT: 최근 4분기 합의 2023~25 연간 최대 대비, from52: 10/19 종가의 52주 고점 대비, pos: 10/16 종가의 52주 범위 위치(0~100), e3q: 3Q26E 영업이익(억)
+  kr:[
+    {n:'SK바이오팜',g:'A',opQ:0,opT:49,from52:-48,pos:7,e3q:917,date:'11/5~9 예상'},
+    {n:'삼성증권',g:'A',opQ:0,opT:47,from52:-51,pos:8,e3q:5017,date:'11/2~13 예상'},
+    {n:'한국금융지주',g:'A',opQ:0,opT:57,from52:-48,pos:6,e3q:7118,date:'11/5~13 예상'},
+    {n:'경동나비엔',g:'A',opQ:0,opT:40,from52:-23,pos:33,e3q:381,date:'미공시'},
+    {n:'코웨이',g:'B',opQ:0,opT:6,from52:-4,pos:96,e3q:2636,date:'11/9 예상'},
+    {n:'현대그린푸드',g:'B',opQ:-18,opT:20,from52:0,pos:95,e3q:485,date:'미공시'},
+    {n:'크래프톤',g:'C',opQ:-27,opT:12,from52:-35,pos:11,e3q:2801,date:'10/29~11/12 예상'},
+    {n:'오리온',g:'C',opQ:-21,opT:8,from52:-27,pos:19,e3q:1548,date:'미공시'},
+    {n:'클래시스',g:'C',opQ:-14,opT:0,from52:-62,pos:2,e3q:492,date:'11/9~12 예상'},
+    {n:'영원무역',g:'D',opQ:-3,opT:-9,from52:-28,pos:38,e3q:2073,date:'미공시'},
+    {n:'기아',g:'D',opQ:-5,opT:-36,from52:-46,pos:8,e3q:24162,date:'10/30 확정'},
+    {n:'JYP Ent.',g:'D',opQ:-41,opT:-13,from52:-55,pos:5,e3q:436,date:'11/12~13 예상'}
+  ],
+  krGroups:{
+    all:'A 4개가 말한 기준에 가장 잘 맞는다. D 3개는 매출만 신고점이라 영업이익까지 넣으면 기준을 통과하지 못한다.',
+    A:'영업이익이 분기로도, 4분기 합으로도 신고점인데 주가는 52주 고점 대비 −23~−51%. "실적은 신고점, 주가는 아직"의 교과서 모양.',
+    B:'실적도 주가도 고점 근처. 괴리가 아니라 추세가 이어지는 경우다. 무릎이 아니라 이미 허리 위다.',
+    C:'4분기 합은 신고점이지만 최근 분기가 꺾였다. 크래프톤 1분기 이벤트, 오리온 4분기 성수기처럼 계절성 때문일 수 있다.',
+    D:'매출은 신고점이지만 영업이익은 아니다. 기아는 4분기 합 이익이 2024년보다 36% 낮다. 보도된 기준만으로는 설명이 안 되는 묶음이다.'
+  },
+  groupColor:{A:'var(--good)',B:'var(--kr)',C:'var(--warn)',D:'var(--bad)'},
+  cases:[
+    {t:'코인 ① 4H 셋업',m:'coin',sit:'BTC 4시간봉이 마감됐고 지지 리테스트 셋업이 보인다.',w:'오는 가격을 지정가로 기다린다. 계좌 대비 1~3배 안쪽. 틀리면 바로 자른다.',me:'진입은 지정가(Post-only), 진입과 동시에 Reduce-only 스톱마켓. 계좌 대비 익스포저 1.5배 이하, 거래당 계좌 손실 1% 이하.',no:'돌파 캔들 따라 시장가 진입. 손절을 지정가로 걸어서 미체결.',src:'R1-1 지정가 97.2% · 플레이북 W1·W2'},
+    {t:'코인 ② 급락 뒤 추격 숏 (실제)',m:'coin',sit:'2026-02-06, 29% 폭락을 보고 5배 숏. 손절 미설정.',w:'빠진 뒤 쫓아가지 않는다. 숏도 오는 반등을 기다려서 친다.',me:'급락 직후 4시간은 신규 진입 금지. 손절 숫자 없으면 주문 버튼 잠금.',no:'"더 빠질 것 같아서" 바닥에서 숏.',src:'2026-02-06 일지 · 갭 분석 1)'},
+    {t:'코인 ③ 버티는 11배 (실제)',m:'coin',sit:'2026-03, BTC 11배 롱. 코치 판정이 WAIT로 바뀌었는데 58시간 보유, −20.7%.',w:'7일 넘긴 포지션은 달러 환산 합계 손실, 최대 손실은 25일 숏이었다. 무효화가 오면 설명을 붙이지 않고 줄인다.',me:'4H 봉 3개 안에 진행 없으면 절반 축소 검토, 6개면 종료. 손실 포지션 72시간 초과 금지. UI 배율 3배 상한.',no:'"장기로 보면 오를 거니까"로 단타를 장기투자로 개명.',src:'R1-4 7일 초과 −$4.04M · 260329 손실 복기'},
+    {t:'코인 ④ NO 무시했는데 수익 (실제)',m:'coin',sit:'2026-02-07, 코치 NO·주말·5배였는데 +13달러 수익.',w:'원장에서도 손실일이 3일에 1일. 하루 결과로 규칙을 고치지 않는다.',me:'일지에 결과(Win/Loss)와 판단(Good/Bad)을 따로 적는다. 이 거래는 Win + Bad.',no:'"됐잖아"로 다음에도 NO를 무시.',src:'2026-02-07 일지 · 플레이북 W6'},
+    {t:'코인 ⑤ 계좌가 불었다',m:'coin',sit:'스윙이 잘 풀려 바이낸스 잔고가 기준선을 넘었다.',w:'실현손익의 80%를 거래소 밖으로 뺐다. 커질수록 더 뺐다.',me:'기준선 초과분은 업비트로. 손실 복구하려고 다시 보내지 않는다.',no:'잔고가 커진 만큼 배율도 키우기.',src:'R1-5 출금 · 플레이북 W5'},
+    {t:'코인 ⑥ 알트 펌핑 FOMO',m:'coin',sit:'처음 보는 알트가 하루 +40%. 커뮤니티가 난리다.',w:'주문의 78.6%가 BTC. 알트 타율이 낮았다고 본인이 인정했다.',me:'화이트리스트: BTC → ETH. 그 외는 같은 셋업 통계 20회 이상일 때만.',no:'고배율 거래소에서 잡알트 롱.',src:'R1-1 · MEXC −97% 폐쇄 경험'},
+    {t:'코인 ⑦ 손절 직후 반대로',m:'coin',sit:'롱이 손절됐다. 차트는 반대로 가는 것 같다. 바로 숏을 잡고 싶다.',w:'그는 틀리면 바로 반대로 갔다. 2020년 3월엔 통했고, 2021년 5월 19일엔 숏 익절 직후 롱이 −172.4 BTC였다.',me:'손실 직후 4시간은 신규 진입 금지. 반대 방향도 새 셋업이니 4H 마감 게이트를 처음부터 다시 통과해야 한다.',no:'본전 생각으로 손절 1분 뒤 반대 포지션, 배율은 더 높게.',src:'REPLAY 1-7 원장 검산 · 투자 법칙 강의 손실 후 4시간 룰'},
+    {t:'국장 ① 실적 신고점, 주가 −50%',m:'kr',sit:'영업이익이 4분기 합 신고점인데 주가는 52주 고점의 절반. 증권주 같은 A 묶음.',w:'(추정) 시장이 빠진 무릎에서, 약 3개월 시야로, 작게. 다음 실적 발표가 무효화 지점.',me:'실험 슬리브(전체의 5% 이하) 안에서만, 한 종목 1~1.5%부터. 매수 전에 다음 실적 발표일과 "이 숫자가 나오면 판다"를 적는다.',no:'배당 본진 적립금으로 사기. 실적이 꺾였는데 "가치투자니까" 버티기.',src:'R3-2·3·4 · CURRENT 포트 실험 슬리브 규칙'},
+    {t:'국장 ② 실적도 주가도 신고점',m:'kr',sit:'코웨이처럼 52주 범위 96% 지점. 좋은 회사인 건 맞다.',w:'(추정) 서한의 무릎·어깨 잣대(원래는 반도체 얘기)를 대면 어깨 쪽이다.',me:'신규 매수는 보류하고 관찰 목록에. 꼭 사고 싶으면 다음 조정 때 다시 본다.',no:'"워뇨띠도 샀대"로 52주 최고가 추격.',src:'R3-3 · 서한 코스피 단락(반도체)'},
+    {t:'국장 ③ 12종목 그대로 따라 사기',m:'kr',sit:'캡처의 12종목을 똑같이 담고 싶다.',w:'비중은 불균등(JYP 0.03%), 시야는 3개월, 원본은 미검증. 그의 포트는 그의 자산 크기에 맞춘 것.',me:'종목이 아니라 필터를 가져온다. 이름을 사기 전에 실적·주가 위치·발표일 표를 내가 직접 만든다.',no:'12개 균등 매수 후 장기보유.',src:'R3-1 출처 경계'},
+    {t:'배당 ① SCHD가 빠졌다',m:'div',sit:'배당 본진 ETF가 −15%. 단타로 빼고 다시 사고 싶다.',w:'게임이 다르다. 그는 한 시장의 방법을 다른 시장에 가져오지 않았다.',me:'배당 계좌는 적립 게임이다. 타이밍 매매 금지, 정해진 날짜에 정해진 금액. 리밸런싱은 분기에만.',no:'배당 ETF를 코인처럼 4시간봉으로 사고팔기.',src:'R2 서한 · CURRENT 포트 운영 규칙'}
+  ],
+  gates:{
+    coin:['4H 봉 마감을 확인했다','진입가 숫자를 적었다','손절가 숫자를 적었다 (스톱마켓)','목표가를 적었고 손익비 2 이상이다','이 거래로 잃는 돈이 계좌의 1% 이하다','계좌 대비 익스포저가 2배 이하다 (화면 배율 3배 이하)','시간 손절 숫자를 적었다','BTC 또는 ETH다'],
+    kr:['영업이익이 최근 신고점이다 (매출만이 아니다)','주가가 52주 범위 하단 쪽이다 (쫓아가는 게 아니다)','다음 실적 발표일을 적었다','"이 실적이면 판다"는 숫자를 적었다','실험 슬리브 상한 안이다 (배당 본진 돈이 아니다)','이익률이 왜 유지되는지 한 줄로 설명할 수 있다']
+  },
+  evid:[
+    ['지정가로 기다려서 산다','R1-1: 주문 97.2% 지정가, 메이커 73.2%','차트를 볼 수 있고 리테스트를 기다릴 수 있는 사람','손절까지 지정가로 바꾸려는 순간 (손절은 스톱마켓)','약함','한 계좌 2018~21, 다른 국면 재계산 없음'],
+    ['계좌 대비 익스포저를 낮게','R1-3: 5배 초과 676건 합계 −135.93 BTC','레버리지를 쓰는 모든 사람','연도·자산을 나눠도 고익스포저 구간이 더 벌었다는 자료가 나오면','약함','연도·자산 규모가 섞여 인과 단정 불가'],
+    ['시간 손절을 둔다','R1-4: 7일 초과 달러 환산 합계 −$4.04M(BTC로는 +158), 최대 손실 25.3일 숏. 단 상위 31판은 중앙값 4.3일 보유(R1-6)','실시간 감시가 안 되는 직장인 스윙','내 30회 실험에서 시간 손절이 손실을 줄인 사례가 3회 미만이면','약함','근사 달러 환산, 표본 38건'],
+    ['번 돈은 판 밖으로','R1-5: 실현손익의 80.1% 출금','거래소에 잔고를 두는 모든 사람','없음. 수익률이 아니라 생존 규칙이다','버팀','원장 지갑 기록 그대로'],
+    ['국장: 실적 신고점 + 소외 + 발표일 무효화','R3-2·3: A 4종목, 8/12이 52주 하단 20%','실험 슬리브가 있고 3개월 단위로 볼 사람','3Q26 실적 발표 뒤 A 묶음 실적이 꺾이는데도 주가가 오르면 (실적보다 수급이 컸다는 뜻)','약함','보유 진위 미확인, 하루 단면, 매입가 모름'],
+    ['손절은 짧게, 익절은 트레일링','PART 4·3: 진 판 중앙값 −0.2%·절반 1시간 내, 큰 31판 고점 대비 반납 중앙값 7.7%','추세 스윙을 하는 사람','내 30회 기록에서 트레일링이 고정 익절보다 R을 줄이면','약함','바이낸스 가격 대용, 분할 청산 평균가'],
+    ['추세 쪽이 더 벌었다','PART 4·2: 4시간·24시간 두 기준 모두 추세 진입 순이익이 4~5배','추세와 역추세 사이에서 고민하는 사람','다른 기준(예: 일봉 추세)으로 나눴을 때 뒤집히면','버팀','두 기준 같은 결론, 단 한 계좌·한 시기'],
+    ['게임마다 방법을 바꾼다','R2 서한 + R3 국장: 코인은 차트, 주식은 실적','여러 계좌를 운용하는 사람','없음. 내 기록에서 섞었을 때 손실이 반복됐다','버팀','2026-02·03 내 실제 기록']
+  ]
+};
+
+const speakerNotes=[
+"오늘은 워뇨띠 리플레이를 세 개 돌릴 거야. 코인 원장, 90일 서한, 그리고 지난주에 퍼진 국장 12종목. 프로게이머 리플레이를 다시 보면 손 빠르기보다 세팅이 먼저 보이잖아. 끝에서 물어볼 건 하나야. 이 중에 내 계좌로 가져올 수 있는 게 뭐지.",
+"시작 전에 손 한번 들어 보자. 코인 하는 사람, 주식 하는 사람, 둘 다, 아직 안 하는 사람. 그리고 장중에 차트 볼 시간이 있는지. 워뇨띠는 같은 사람인데 게임마다 플레이가 달라. 그래서 내가 어느 게임에 앉아 있는지부터 정해야 그의 어디를 볼지가 나와.",
+"내 얘기부터 할게. 올해 2월에 고배율 단타 계좌 97% 날리고 닫았고, 3월엔 BTC 11배 롱을 코치가 기다리라는데 버티다 20% 잃었어. 9월에 워뇨띠 원장이 공개돼서 내 기록이랑 나란히 놓고 봤는데, 웃긴 게 내 규칙은 이미 그 방향이랑 대부분 맞더라. 3배 상한, 손절 먼저, 수익은 업비트로. 근데 실제 클릭이 반대였어. 오늘 강의는 그 간격 얘기야.",
+"전설 따라 하다 망하는 방식은 세 개야. 종목 복사. JYP 샀다는데 기사 추산으로 전체의 0.03%야. 빈도 복사. 코인 보유 중앙값이 26분인데 그는 하루 10시간 봤어. 그리고 생존편향. 원장에 초반 청산 흔적이 있어. 살아남은 결과만 보고 초반 위험까지 따라 하면 우리는 청산된 쪽에 들어가.",
+"지도를 먼저 보여줄게. 층이 세 개야. 맨 위는 타점, 게임마다 바뀌어. 코인은 차트, 국장은 실적. 가운데는 판단 틀, 서한에서 보인 가치, 추세, 주목도. 맨 아래가 생존 층인데, 이건 세 리플레이에서 똑같이 나와. 오늘 내 계좌로 옮길 건 이 맨 아래야.",
+"오늘 끝나면 세 장을 들고 가는 거야. 내 게임 구분표, 살 때 팔 때 카드 한 장, 그리고 날짜 박힌 이번 주 행동 하나. 외우는 시간 아니야. 만들고 가는 시간이야.",
+"리플레이 돌리기 전에 파일부터 검사하자. 그가 9월 22일 오전에 디시에 예고하고, 오후에 구글 드라이브 링크를 올렸어. 예고에 적은 숫자가 입금 14.4 비트, 실현손익 3,537 비트, 140만 행, 주문 약 2만 3천 개인데, 내가 파일로 다시 세 보니 그대로 맞았어. 그리고 공개글 끝에 이걸로 거래봇 만들어서 팔지 말라고 적었어. 이거 기억해 둬. 나중에 워뇨띠 봇 판다는 사람 보면 이 화면 떠올리면 돼.",
+"첫 번째 리플레이. 체결이 144만 줄이라 하루 종일 클릭한 사람 같지? 주문으로 묶으면 2만 3천 개야. 한 주문이 평균 61조각으로 나뉘어 체결된 거지. 그리고 97%가 지정가였어. 쫓아가서 시장가로 산 게 아니라, 오는 가격을 기다린 거야. 주문의 79%가 BTC였고, 롱도 숏도 쳤는데 숏이 더 벌었어. 방향 신앙이 없었던 거지.",
+"이게 내가 제일 좋아하는 장이야. 2018년엔 1,755번 포지션 잡고 중앙값 12분 들고 있었어. 스타로 치면 초반 러시. 2021년엔 124번에 15시간. 운영형으로 바뀐 거지. 포지션 크기는 엄청 커졌는데, 계좌 대비 익스포저는 3.5배에서 0.7배로 내려갔어. 돈이 커질수록 덜 실은 거야. 여기서 계좌 대비 익스포저는 화면 배율이랑 달라. 10배 띄워도 계좌의 10%만 넣으면 계좌 기준 1배야.",
+"익스포저 구간별 성적표야. 1에서 3배가 제일 많이 벌었고, 5배 넘게 실은 676번은 합치면 마이너스야. 전설도 세게 실으면 졌어. 다만 연도랑 자산이 섞여 있어서 5배가 원인이라고 단정은 못 해. 말할 수 있는 건, 고배율이 그의 성공 비결이었다는 증거는 없다는 거야.",
+"파는 자리 첫 번째, 시간. 오래 들고 갈수록 승률이 떨어지고, 일주일 넘긴 포지션은 달러로 환산하면 합쳐서 400만 달러 손실이야. 비트로 세면 오히려 플러스라 단위를 같이 말해야 해. 제일 크게 맞은 건 2021년 가을에 25일 들고 간 숏이야. 내 11배 롱 58시간이랑 같은 병이지. 틀린 단타를 장기투자로 개명하는 병. 시간은 손절을 대신해 주지 않아.",
+"파는 자리 두 번째, 번 돈을 빼는 거. 14.5 비트로 시작해서 3,537 비트를 벌었는데, 그중 2,833 비트를 거래소 밖으로 뺐어. 80%야. 던전에서 주운 골드를 매번 마을 창고에 넣고 다시 들어간 거지. 전멸해도 창고는 남아. 해가 갈수록 더 많이 뺐다는 것도 봐.",
+"이게 이번에 다시 계산하면서 제일 놀란 장이야. BTC 포지션 2,589개를 번 순서로 줄 세우면 상위 26개, 딱 1%가 전체 순이익보다 많이 벌었어. 나머지 2,563개는 합치면 거의 0이야. 그러니까 75% 승률은 돈 버는 장치가 아니라 계좌를 지키는 장치였던 거지. 돈은 몇 판에서 나왔는데, 그 판들은 중앙값 4일 넘게 들고 갔어. 근데 앞에서 7일 넘긴 건 손해였다고 했잖아. 오래 들고 가라가 아니라, 맞는 판만 오래 들고 간 거야.",
+"요즘 이 원장 해설 영상이 많아. 그중에 정리 잘된 영상 하나를 내 재계산이랑 나란히 놨어. 승률, 지정가, 상위 1% 몰빵 구조는 다 맞아. 근데 두 개가 달라. 초기 입금 5 비트는 원장이랑 안 맞고, 2021년 5월 19일 폭락 때 롱으로 갈아타서 방어했다는 장면은 원장에선 반대야. 숏 익절하고 바로 잡은 롱이 172 비트를 잃었어. 전체 4번째 큰 손실이야. 전설의 스위칭도 양날의 검이고, 남의 해설도 원장에 대 봐야 한다는 거지.",
+"코인 리플레이 요약이야. 사는 자리는 지정가로 기다리기, BTC 먼저, 롱숏 둘 다, 계좌 대비 1에서 3배. 파는 자리는 패턴 깨지면 빨리, 오래 끌지 않기, 번 돈은 밖으로, 커지면 덜 싣기. 그리고 아래 복사 금지 목록. 그는 화면 앞에 있었고 우리는 회의실에 있어. 그래서 하드스탑은 우리한테 선택이 아니야.",
+"두 번째 리플레이, 90일 서한. 결론보다 틀을 봐. 코인은 싸고, 추세 좋고, 돈도 몰린다, 세 개가 맞으니 상승. 나스닥은 비싼데 숏 안 쳐. 비싸다고 숏치면 2~3년 고생할 수 있다고. 코스피는 비싸지만 주주환원이라는 구조 변화가 있고, 이익이 반도체에 몰렸는데 2027년 말부터 수요가 꺾인다고 봐. 그래서 삼성전자랑 하이닉스는 길게 사지도 팔지도 않고 출렁일 때마다 무릎에 사서 어깨에 판대. 1차 검증일이 10월 22일이야.",
+"서한 원문을 다시 읽다가 내가 하나 잘못 알고 있던 걸 찾았어. 무릎에 사서 어깨에 판다는 말, 코스피 전체가 아니라 삼성전자랑 하이닉스 얘기였어. 이익이 반도체에 몰려 있고 2027년 말부터 수요가 줄 거라서, 길게 사지도 팔지도 않고 출렁일 때만 치겠다는 거지. 그리고 웃긴 건, 3주 뒤 공개된 국장 종목에는 반도체가 하나도 없어. 그러니까 뒤에서 12종목을 무릎이라고 부르는 건 내 해석이라는 걸 미리 말해 둘게.",
+"세 번째 리플레이는 파일 검사부터. 이건 원본이 아니라 캡처가 퍼진 거야. 원글 링크도, 계좌 진위도 내가 직접 확인 못 했어. 그러니까 지금부터는 이 캡처가 사실이라면이라는 조건이 붙어. 보도된 말은 3개월 보고 가치투자로 샀다, 주가보다 실적 고점을 본다, 반도체는 이익률이 지속될지 의문이라 뺐다. 그리고 비중이 같지 않다는 것. JYP는 0.03%인데, 편입 이유가 기사에 따르면 나무증권 광고모델이 엔믹스 설윤이라서래. 전설도 0.03%는 이렇게 산다. 그러니 이름만 보고 따라 사면 안 되는 거야.",
+"이게 퍼진 캡처야. 왼쪽 계좌 화면에 종목별 수익률이 보이는데 대부분 마이너스 0.6에서 플러스 8 사이야. 산 지 얼마 안 됐거나, 10월 16일 가격 근처에서 샀다는 뜻이지. 오른쪽은 기사 인용인데 본인 말이 두 개 나와. 코인은 단타였는데 주식은 3개월 정도 본다, 반도체는 70에서 80% 영업이익률이 계속 갈지 의문이다. 둘 다 디시 원글을 옮긴 거고 원글 링크는 아직 내가 못 찾았어.",
+"그 말이 숫자랑 맞는지 내가 직접 셌어. 영업이익이 분기로도, 1년 합으로도 신고점인데 주가는 반토막인 종목. SK바이오팜, 삼성증권, 한국금융지주, 경동나비엔, 이 넷이 교과서 모양이야. 반대로 기아, 영원무역, JYP는 매출만 신고점이고 이익은 아니야. 기아는 1년 합 이익이 작년보다 36% 낮아. 버튼 눌러서 묶음별로 같이 보자.",
+"사는 자리를 찍어 봤어. 캡처가 돈 날 종가가 1년 범위 어디였는지. 12개 중 8개가 바닥 20% 안이야. 그날 코스피는 6월 고점에서 40% 빠져 있었어. 서한에서 반도체를 두고 한 무릎 얘기를 이 종목들에 대 보면 이런 자리야. 이건 내 해석이고. 그리고 10월 16일은 캡처 날짜지 산 날짜가 아니야. 다만 캡처 수익률이 대부분 0% 근처라 이 근처에서 샀을 가능성은 높아.",
+"여기서부터는 내 추정이야. 그가 이렇게 설명한 적은 없어. 사는 조건은 넷. 이익이 먼저 신고점, 주가는 시장 급락으로 소외, 주주환원 같은 구조 변화, 이익률 지속성이 의심되는 업종은 빼기. 파는 조건은 3개월이라는 시야, 실적 발표가 무효화 지점, 그리고 크기로 이미 손절 중인 것. 첫 시험대는 증권주야. 3분기 예상 이익이 2분기보다 크게 낮거든. 10월 30일 기아부터 발표가 시작돼.",
+"세 리플레이를 겹친 패치노트야. 보는 것, 사는 자리, 파는 자리는 게임마다 달라. 근데 오른쪽 열은 똑같아. 쫓아가지 않는다, 시간은 손절을 대신하지 않는다, 커질수록 덜 싣는다, 한 판에 전부 두지 않는다, 모르는 판은 건너뛴다. 이게 세팅값이야.",
+"이제 진짜 사고파는 문법이야. 차트 매매에는 크게 두 직업이 있어. 추세매매는 마리오카트 대시판이야. 이미 달리는 쪽에 올라타. 오르는 걸 사고, 꺾일 때까지 들고 가고, 고점에서 몇 % 빠지면 나와. 역추세는 격투 게임 카운터야. 너무 간 걸 반대로 쳐. 급락하면 사고 급등하면 팔고, 손절은 방금 찍은 극단 바로 너머에 촘촘하게, 익절은 빨리. 추세는 자주 지고 가끔 크게 벌고, 역추세는 자주 이기고 가끔 크게 져. 들어가는 이유가 반대니까 나오는 자리도 반대야.",
+"그럼 워뇨띠는 어느 쪽이었을까. 포지션마다 들어가기 직전 4시간 동안 가격이 오르고 있었는지 봤어. 오르는데 롱이면 추세, 내리는데 롱이면 역추세. 결과는 역추세를 훨씬 자주 쳤어. 승률은 둘 다 75%로 똑같아. 근데 돈은 추세 쪽에서 네 배를 벌었어. 역추세는 최대 수익 판에도 많은데, 최대 손실 판에는 더 많아. 24시간 기준으로 바꿔도 결론이 같아. 전설한테도 역추세는 양날의 검이었던 거지.",
+"어디서 나왔는지도 봤어. 진 판은 가격으로 중앙값 0.2% 틀리면 나왔고, 절반은 한 시간 안에 정리했어. 엄청 촘촘하지. 반대로 이긴 판은 고점에서 딱 팔지 않았어. 4시간 넘게 들고 간 이긴 판은 고점 대비 2% 정도, 크게 번 31판은 7.7% 정도 내주고 나왔어. 고점 대비 마이너스 10% 언저리 트레일링이랑 모양이 비슷해. 다만 그는 분할로 나눠 팔았고 하루 종일 봤어. 우리한테 맞는 번역은 손절은 진입 전에 숫자로, 익절은 트레일링으로야.",
+"여기서 중요한 구분 하나. 지수 ETF나 배당 ETF를 매달 사는 돈, just keep buying 하는 돈에는 탈출 전략이 없어. 빠지면 싸게 사는 날이야. 대신 리밸런싱 날짜랑 은퇴 후 인출 규칙이 있지. 그런데 그 밖의 모든 매매, 코인이든 개별주든, 들어갈 때 전략이 있듯이 나올 때 전략이 반드시 있어야 해. 주문 넣기 전에 숫자로. 손절 하나, 익절 하나, 시간 하나.",
+"나오는 방법은 이렇게 여러 개야. 고정 손절, 고점 대비 마이너스 X% 트레일링, 이동평균 이탈, 시간 손절, 목표가 분할 익절, 가설 무효화, 이벤트 전 정리, 변동성 스탑. 정답은 없어. 추세매매에 촘촘한 고정 손절 붙이면 큰 판 다 놓치고, 역추세에 넉넉한 트레일링 붙이면 되돌림 이익 다 토해내. 내 스타일에 맞는 걸 골라서 손절 하나, 익절 하나, 시간 하나 세트로 만드는 거야.",
+"직접 해보자. 비트코인을 2020년 10월 상승장 초입에 샀을 때랑, 2021년 4월 고점 근처에 샀을 때. 고점 대비 몇 % 빠지면 팔지 슬라이더로 골라 봐. 상승장 초입이면 촘촘할수록 두 달 만에 털리고, 안 판 사람이 제일 많이 벌었어. 고점 근처면 반대야. 촘촘할수록 덜 잃었고, 안 판 사람은 중간에 반토막이 났어. 사기 전엔 어느 쪽인지 몰라. 그래서 내가 견딜 수 있는 폭을 고르는 거야.",
+"이제 고를 차례야. 다섯 문항. 차트 볼 시간, 어떤 패배가 덜 괴로운지, 수익이 빠질 때 몇 %까지 참는지, 뭘 보고 사고 싶은지, 비상금. 그러면 적립 농부, 추세 서퍼, 역추세 카운터, 실적 사냥꾼 중 하나가 나오고, 들어가는 법이랑 나오는 법이 세트로 나와. 비상금이 없으면 매매 직업은 잠겨.",
+"그럼 나는 뭘 골랐냐. 메인은 배당 적립 농부야. 탈출 없음, 분기 리밸런싱이랑 인출 규칙만. 부캐는 비트코인 4시간봉 추세 스윙이야. 손절은 진입 전에 숫자로 계좌 1% 이하, 익절은 손익비 2 이상에 나머지는 트레일링, 봉 6개 안에 안 가면 정리. 개별주는 실험 슬리브 5% 안에서 실적 발표를 무효화 지점으로. 역추세 카운터는 내 직업이 아니라고 결론 냈어. 마이너스 97%가 알려줬거든. 이 세트도 아직 30회 기록으로 검증 중이야.",
+"이제 내 계좌로 옮겨 보자. 케이스 열한 개야. 네 개는 내 실제 기록이고, 일곱 개는 앞으로 만날 장면이야. 하나씩 눌러 보면 워뇨띠 세팅이면 뭘 하는지, 내 규칙으로는 뭘 하는지, 절대 하지 말 것이 나와. 국장 첫 번째 케이스는 특히 봐. 좋아 보여도 실험 슬리브 안에서만이야.",
+"5분 실습이야. 게임 고르고 게이트 체크해 봐. 하나라도 비면 그날은 NO야. 감성으로 빈칸 메우지 마. 오른쪽 빈칸 채우면 내 규칙 카드 문장이 만들어져. 금액은 안 써도 돼. 다 쓴 사람은 옆 사람한테 읽어 줘.",
+"오늘 한 말을 내가 다시 의심해 봤어. 근거, 맞는 사람, 그만둘 조건, 판정. 대부분 약함이야. 코인 원장은 한 계좌 4년치뿐이라 다른 국면으로 돌려 볼 수가 없고, 국장은 캡처 하루 단면이거든. 버팀은 두 개뿐이야. 번 돈은 밖으로, 게임마다 방법 바꾸기. 둘 다 수익률 얘기가 아니라 생존 얘기야.",
+"정리야. 여섯 줄인데 하나만 고르라면 게임을 먼저 정한다. 그리고 이번 주 하나만 하자. 10월 22일 서한 1차 검증일에 그의 판단 다섯 칸이랑 내 판단을 같이 적기. 10월 30일 기아 실적은 사지 말고 관찰만. 코인 하는 사람은 계좌 대비 익스포저 칸 하나 추가.",
+"처음 질문으로 돌아가자. 그의 무엇을 가져올 수 있지? 종목은 못 가져와. 빈도도 못 가져와. 가져올 수 있는 건 살아서 다음 판에 접속하게 만드는 세팅값이야. 그건 우리 계좌에서도 똑같이 작동해. 질문 받을게.",
+"마지막은 자료실이야. 구글 드라이브 원본 링크, 내가 분석에 쓴 미러랑 해시, 본인 디시 글 두 개, 서한 재게시, 기사, 내 분석 노트까지 다 여기 있어. 오늘 내가 한 말이 맞는지 직접 확인해 보고 싶은 사람은 여기서 시작하면 돼. 게시글은 지워질 수 있으니까 필요하면 오늘 받아 둬."
+];
+
+const $=id=>document.getElementById(id);
+const fmt=(v,d=2)=>(v>0?'+':'')+v.toLocaleString('ko-KR',{minimumFractionDigits:d,maximumFractionDigits:d});
+const sign=v=>v<0?'neg':(v>0?'pos':'');
+
+// 헤드라인 숫자
+document.querySelectorAll('[data-k]').forEach(el=>{el.textContent=DATA.headline[el.dataset.k];});
+
+// 롱숏
+$('tLS').innerHTML='<tr><th>방향</th><th class="num">횟수</th><th class="num">승률</th><th class="num">순손익 (BTC)</th></tr>'+DATA.longShort.map(r=>`<tr><td>${r[0]}</td><td class="num">${r[1].toLocaleString()}</td><td class="num">${r[2].toFixed(1)}%</td><td class="num ${sign(r[3])}">${fmt(r[3])}</td></tr>`).join('');
+
+// 연도
+const barRows=(rows,max,color,f)=>rows.map(r=>`<div class="bar" style="--c:${color}"><span>${r[0]}</span><i><b style="width:${Math.max(2,r[1]/max*100)}%"></b></i><em>${f(r[1])}</em></div>`).join('');
+$('bExp').innerHTML=barRows(DATA.years.map(y=>[y.y,y.exp]),4,'var(--coin)',v=>v.toFixed(2)+'배');
+$('bHold').innerHTML=barRows(DATA.years.map(y=>[y.y,y.hold]),1000,'var(--letter)',v=>v.toLocaleString()+'분');
+$('tYear').innerHTML='<tr><th>연도</th><th class="num">포지션 수</th><th class="num">보유 중앙값</th><th class="num">포지션당 주문</th></tr>'+DATA.years.map(y=>`<tr><td>${y.y}</td><td class="num">${y.n.toLocaleString()}</td><td class="num">${y.hold>=60?(y.hold/60).toFixed(1)+'시간':y.hold+'분'}</td><td class="num">${y.orders}개</td></tr>`).join('');
+
+// 익스포저·보유시간
+$('tExpB').innerHTML='<tr><th>계좌 대비 익스포저</th><th class="num">포지션 수</th><th class="num">승률</th><th class="num">합산 순손익 (BTC)</th></tr>'+DATA.expBuckets.map(r=>`<tr class="${r[3]<0?'hl':''}"><td>${r[0]}</td><td class="num">${r[1]}</td><td class="num">${r[2].toFixed(1)}%</td><td class="num ${sign(r[3])}">${fmt(r[3])}</td></tr>`).join('');
+$('tHoldB').innerHTML='<tr><th>보유시간</th><th class="num">수</th><th class="num">승률</th><th class="num">근사 손익 ($M)</th></tr>'+DATA.holdBuckets.map(r=>`<tr class="${r[3]<0?'hl':''}"><td>${r[0]}</td><td class="num">${r[1]}</td><td class="num">${r[2].toFixed(1)}%</td><td class="num ${sign(r[3])}">${fmt(r[3])}</td></tr>`).join('');
+
+// 파레토·영상 검산
+$('tPareto').innerHTML='<tr><th>묶음</th><th class="num">포지션</th><th class="num">순손익 (BTC)</th><th>뜻</th></tr>'+DATA.pareto.map(r=>`<tr class="${r[2]<0?'hl':''}"><td>${r[0]}</td><td class="num">${r[1].toLocaleString()}</td><td class="num ${sign(r[2])}">${fmt(r[2])}</td><td>${r[3]}</td></tr>`).join('');
+$('bHold2').innerHTML=barRows(DATA.holdSplit,110,'var(--coin)',v=>v<1?Math.round(v*60)+'분':(v/24).toFixed(1)+'일');
+const vMap={'일치':'v-ok','방향 일치':'v-ok','근사':'v-weak','불일치':'v-bad','반대':'v-bad'};
+$('tVerify').innerHTML='<tr><th>항목</th><th>영상 해설</th><th>내 재계산</th><th>판정</th></tr>'+DATA.verify.map(r=>`<tr><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td><td><span class="verdict-chip ${vMap[r[3]]}">${r[3]}</span></td></tr>`).join('');
+
+// PART 4: 추세/역추세
+function renderTrend(h){
+  const rows=DATA.trend[h];
+  $('tTrend').innerHTML='<tr><th>진입</th><th class="num">포지션</th><th class="num">승률</th><th class="num">순손익 (BTC)</th><th class="num">최대 수익 31판</th><th class="num">최대 손실 31판</th></tr>'+rows.map(r=>`<tr><td>${r[0]}</td><td class="num">${r[1].toLocaleString()}</td><td class="num">${r[2].toFixed(1)}%</td><td class="num ${sign(r[3])}">${fmt(r[3],1)}</td><td class="num">${r[4]}</td><td class="num neg">${r[5]}</td></tr>`).join('');
+  $('bTrend').innerHTML=barRows(rows.map(r=>[r[0],r[3]]),1800,'var(--letter)',v=>v.toLocaleString('ko-KR',{maximumFractionDigits:0})+' BTC');
+}
+$('trTabs').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;$('trTabs').querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));renderTrend(b.dataset.h);});
+// 탈출 통계
+const X=DATA.exitStat;
+$('xLossMove').textContent=X.lossMove+'%';$('xLossP10').textContent=X.lossP10+'%';$('xLoss1h').textContent=X.loss1h+'%';
+$('xWinGive').textContent='−'+X.winGive+'%';$('xWinMfe').textContent='+'+X.winMfe+'%';
+$('xTopGive').textContent='−'+X.topGive+'%';$('xTopP75').textContent=X.topP75+'%';
+// 메뉴판
+$('exitMenu').innerHTML=DATA.exits.map(m=>`<div class="m" style="--c:var(${m[5]})"><b>${m[0]}</b>${m[1]}<i>맞는 스타일: ${m[2]}</i><i>약점: ${m[3]}</i><i>워뇨띠 흔적: ${m[4]}</i></div>`).join('');
+// 트레일링 시뮬
+let trailKey='good';
+function renderTrail(){
+  const S=DATA.trailSim[trailKey],x=+$('trailX').value,r=S.trail.find(t=>t.x===x),hold=S.other[2];
+  $('trailOut').textContent='−'+x+'%';
+  const el=$('trailRet');el.textContent=(r.ret>0?'+':'')+r.ret+'%';el.style.color=r.ret>=0?'var(--good)':'var(--bad)';
+  $('trailMsg').textContent=`${S.label}: 매수가 ${S.entry.toLocaleString()}달러 → ${r.date}에 매도, ${r.days}일 보유. 안 팔았으면 21년 말 ${hold.ret>0?'+':''}${hold.ret}%. 이 구간 최고점은 ${S.peakDate} ${S.peak.toLocaleString()}달러(+${S.maxRet}%).`;
+  $('tTrailOther').innerHTML='<tr><th>다른 탈출 규칙</th><th>매도일</th><th class="num">수익률</th></tr>'+S.other.map(o=>`<tr><td>${o.rule}</td><td>${o.date}</td><td class="num ${sign(o.ret)}">${o.ret>0?'+':''}${o.ret}%</td></tr>`).join('');
+}
+$('trailX').addEventListener('input',renderTrail);
+$('trailTabs').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;$('trailTabs').querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));trailKey=b.dataset.k;renderTrail();});
+// 매매법 고르기
+const SQ=DATA.styleQ,SR=DATA.styleR,sp=Array(SQ.length).fill(null);
+$('styleQuiz').innerHTML=SQ.map((x,i)=>`<div class="box" style="padding:10px 12px"><p style="margin:0 0 6px;font-weight:700;color:var(--ink)">${i+1}. ${x.q}</p><div class="opts">${x.a.map((o,j)=>`<button data-q="${i}" data-a="${j}" aria-pressed="false">${o[0]}</button>`).join('')}</div></div>`).join('');
+$('styleQuiz').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;sp[+b.dataset.q]=+b.dataset.a;b.parentElement.querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));renderStyle();});
+function renderStyle(){
+  const o=$('styleOut');
+  if(sp.some(v=>v===null)){o.style.removeProperty('--c');o.style.removeProperty('--cs');o.innerHTML=`<h3>${sp.filter(v=>v===null).length}문항 남았다</h3><p class="cap">다 고르면 진입·탈출 세트가 나온다.</p>`;return;}
+  const sc={farm:0,trend:0,counter:0,earn:0};let lock=false;
+  sp.forEach((v,i)=>{const s=SQ[i].a[v][1];for(const k in s){if(k==='lock')lock=true;else sc[k]+=s[k];}});
+  if(lock){sc.trend=0;sc.counter=0;sc.earn=0;}
+  const top=Object.keys(sc).sort((a,b)=>sc[b]-sc[a])[0],r=SR[top];
+  o.style.setProperty('--c',`var(${r.c})`);o.style.setProperty('--cs',`var(${r.c}-s)`);
+  o.innerHTML=`<p class="cap">당신의 매매법</p><h3>${r.n}</h3><div class="case"><div><b>들어갈 때</b>${r.e}</div><div><b>나올 때</b>${r.x}</div><div><b>워뇨띠에서 가져올 것</b>${r.w}</div><div class="no"><b>하지 말 것</b>${r.d}</div></div>`+(lock?`<p class="cap">🔒 비상금이 없어서 매매 계열은 잠겨 있다. 비상금부터 채우면 열린다.</p>`:'')+`<p class="cap">재미로 보는 분류이며 투자 성향 진단이나 권유가 아니다.</p>`;
+}
+renderTrend('4');renderTrail();renderStyle();
+
+// 출금
+$('bWd').innerHTML=barRows(DATA.withdraw,2000,'var(--me)',v=>v.toLocaleString('ko-KR',{maximumFractionDigits:0})+' BTC');
+const pnl=DATA.wallet[1][1],wd=-DATA.wallet[2][1];
+$('tWallet').innerHTML='<tr><th>항목</th><th class="num">BTC</th></tr>'+DATA.wallet.map(r=>`<tr><td>${r[0]}</td><td class="num ${sign(r[1])}">${fmt(r[1])}</td></tr>`).join('')+`<tr><td>출금 ÷ 실현손익</td><td class="num">${(wd/pnl*100).toFixed(1)}%</td></tr>`;
+
+// 국장 표
+const pct=v=>v===0?'<span class="pos">신고점</span>':`<span class="${v>0?'pos':'neg'}">${v>0?'+':''}${v}%</span>`;
+function renderKr(g){
+  const rows=DATA.kr.filter(r=>g==='all'||r.g===g);
+  $('tKr').innerHTML='<tr><th>종목</th><th>묶음</th><th class="num">영업이익 분기</th><th class="num">영업이익 4분기 합</th><th class="num">52주 고점 대비</th><th class="num">3Q26E 영업이익(억)</th><th>3Q26 발표</th></tr>'+rows.map(r=>`<tr><td>${r.n}</td><td><span class="verdict-chip" style="color:${DATA.groupColor[r.g]};border:1px solid currentColor">${r.g}</span></td><td class="num">${r.opQ===0?pct(0):pct(r.opQ)}</td><td class="num">${r.opT>0?'<span class="pos">신고점 +'+r.opT+'%</span>':pct(r.opT)}</td><td class="num neg">${r.from52}%</td><td class="num">${r.e3q.toLocaleString()}</td><td>${r.date}</td></tr>`).join('');
+  $('krMsg').textContent=DATA.krGroups[g];
+}
+$('krTabs').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;$('krTabs').querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));renderKr(b.dataset.g);});
+
+// 52주 위치
+$('rng').innerHTML=[...DATA.kr].sort((a,b)=>a.pos-b.pos).map(r=>`<div class="row"><b>${r.n}</b><div class="track"><span class="dot" style="left:${Math.min(97,Math.max(3,r.pos))}%;--c:${DATA.groupColor[r.g]}"></span></div><em>${r.pos}</em></div>`).join('');
+
+// 눈높이
+const poll={m:null,t:null};
+function renderPoll(){
+  const o=$('pollOut');
+  if(poll.m===null||poll.t===null){return;}
+  const map={
+    coin:['REPLAY 1에 집중','코인 원장 6장이 네 장이다. 특히 계좌 대비 익스포저와 시간 손절.','--coin'],
+    stock:['REPLAY 3에 집중','국장 4장이 네 장이다. 종목 말고 필터를 가져간다.','--kr'],
+    both:['패치노트 장에 집중','두 게임을 섞지 않는 게 핵심이다. 계좌마다 게임을 정한다.','--letter'],
+    none:['생존 층만 가져가도 충분','아직 매매를 안 한다면 지금이 규칙부터 만들기 가장 싼 때다.','--me']
+  }[poll.m];
+  const t=['직장인이면 하드스탑과 시간 손절이 필수다. 워뇨띠는 화면 앞에 있었다.','하루 30분이면 4시간봉·일봉 스윙이 상한이다. 25분 단타는 복사 금지.','시간이 있어도 그의 2021년 운영형을 보자. 돈이 커질수록 느려졌다.'][poll.t];
+  o.style.setProperty('--c',`var(${map[2]})`);o.style.setProperty('--cs',`var(${map[2]}-s)`);
+  o.innerHTML=`<p class="cap">오늘 내가 볼 곳</p><h3>${map[0]}</h3><p>${map[1]}</p><p>${t}</p>`;
+}
+[['pollMarket','m'],['pollTime','t']].forEach(([id,k])=>$(id).addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;$(id).querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));poll[k]=k==='t'?+b.dataset.v:b.dataset.v;renderPoll();}));
+
+// 케이스
+const cColor={coin:'--coin',kr:'--kr',div:'--me'};
+$('caseTabs').innerHTML=DATA.cases.map((c,i)=>`<button data-i="${i}" aria-pressed="${i===0}">${c.t}</button>`).join('');
+function renderCase(i){
+  const c=DATA.cases[i],o=$('caseOut');
+  o.style.setProperty('--c',`var(${cColor[c.m]})`);o.style.setProperty('--cs',`var(${cColor[c.m]}-s)`);
+  o.innerHTML=`<h3>${c.t}</h3><p>${c.sit}</p><div class="case"><div><b>워뇨띠 세팅이면</b>${c.w}</div><div><b>내 규칙으로는</b>${c.me}</div><div class="no"><b>하지 말 것</b>${c.no}</div><div><b>근거</b>${c.src}</div></div>`;
+}
+$('caseTabs').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;$('caseTabs').querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));renderCase(+b.dataset.i);});
+
+// 게이트
+let gateMode='coin';
+function renderGate(){
+  $('gate').innerHTML=DATA.gates[gateMode].map((g,i)=>`<label><input type="checkbox" data-i="${i}"> ${g}</label>`).join('');
+  updateGate();
+}
+function updateGate(){
+  const boxes=[...$('gate').querySelectorAll('input')],n=boxes.filter(b=>b.checked).length,all=boxes.length,o=$('gateOut');
+  const ok=n===all;
+  o.style.setProperty('--c',ok?'var(--good)':'var(--bad)');o.style.setProperty('--cs',ok?'var(--me-s)':'var(--bad-s)');
+  o.innerHTML=ok?`<h3>GO 검토 가능</h3><p class="cap">게이트를 다 채웠다. 그래도 크기는 계좌 1% 손실 안쪽으로.</p>`:`<h3>NO · ${all-n}칸 비었다</h3><p class="cap">빈칸을 감으로 메우지 않는다. 오늘은 관망도 매매다.</p>`;
+}
+$('gate').addEventListener('change',updateGate);
+$('gateTabs').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;$('gateTabs').querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));gateMode=b.dataset.m;renderGate();});
+
+// 규칙 카드
+const esc=s=>s.replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function renderCard(){
+  const v=id=>esc($(id).value.trim())||'<span style="color:var(--sub)">___</span>';
+  $('rulecard').innerHTML=`나는 <b>${esc($('fGame').value)}</b> 게임에서 <b>${v('fBuy')}</b> 조건에 산다. <b>${v('fStop')}</b>이면 판다. <b>${v('fTime')}</b>. 번 돈은 <b>${v('fOut')}</b>.`;
+}
+['fGame','fBuy','fStop','fTime','fOut'].forEach(id=>$(id).addEventListener('input',renderCard));
+
+// 근거표
+const vClass={'버팀':'v-ok','약함':'v-weak','무너짐':'v-bad'};
+$('tEvid').innerHTML='<tr><th>추천</th><th>근거</th><th>맞는 사람</th><th>그만둘 조건</th><th>판정</th></tr>'+DATA.evid.map(r=>`<tr><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td><td>${r[3]}</td><td><span class="verdict-chip ${vClass[r[4]]}">${r[4]}</span><div class="cap">${r[5]}</div></td></tr>`).join('');
+
+// 네비
+const slides=[...document.querySelectorAll('.slide')];
+let cur=0;
+function go(i){
+  cur=Math.max(0,Math.min(slides.length-1,i));
+  slides.forEach((s,k)=>s.classList.toggle('active',k===cur));
+  $('prog').style.width=((cur+1)/slides.length*100)+'%';
+  $('cnt').textContent=(cur+1)+' / '+slides.length;
+  $('speakerText').textContent=speakerNotes[cur]||'';
+  try{history.replaceState(null,'','#'+(cur+1));}catch(e){}
+}
+$('prev').onclick=()=>go(cur-1);
+$('next').onclick=()=>go(cur+1);
+document.addEventListener('keydown',e=>{
+  if(['INPUT','SELECT','TEXTAREA','BUTTON','A'].includes(e.target.tagName))return;
+  if(['ArrowRight','PageDown',' '].includes(e.key)){e.preventDefault();go(cur+1);}
+  if(['ArrowLeft','PageUp'].includes(e.key)){e.preventDefault();go(cur-1);}
+  if(e.key==='Home')go(0);
+  if(e.key==='End')go(slides.length-1);
+  if(e.key==='Escape'){$('speakerCard').hidden=true;$('talkToggle').setAttribute('aria-expanded','false');}
+});
+let tx=null,ty=null;
+document.addEventListener('touchstart',e=>{if(['INPUT','SELECT'].includes(e.target.tagName)||e.target.closest('.tw')){tx=null;return;}tx=e.touches[0].clientX;ty=e.touches[0].clientY;},{passive:true});
+document.addEventListener('touchend',e=>{if(tx===null)return;const dx=e.changedTouches[0].clientX-tx,dy=e.changedTouches[0].clientY-ty;if(Math.abs(dx)>50&&Math.abs(dx)>Math.abs(dy)*1.5)go(cur+(dx<0?1:-1));tx=null;},{passive:true});
+$('talkToggle').onclick=()=>{const c=$('speakerCard');c.hidden=!c.hidden;$('talkToggle').setAttribute('aria-expanded',String(!c.hidden));};
+
+renderKr('all');renderCase(0);renderGate();renderCard();
+if(speakerNotes.length!==slides.length)console.warn('발표 멘트 수와 슬라이드 수가 다르다',speakerNotes.length,slides.length);
+go((parseInt(location.hash.slice(1))||1)-1);
+</script>
+</body>
+</html>
